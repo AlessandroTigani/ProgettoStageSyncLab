@@ -1,0 +1,622 @@
+{
+  "openapi": "3.1.0",
+  "x-stoplight": {
+    "id": "jsjm6ws2bnsnf"
+  },
+  "info": {
+    "title": "User",
+    "version": "1.0",
+    "summary": "API for User Service",
+    "description": "Manages the CRUD operations for the users in the platform and the login/logout operations."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api",
+      "description": ""
+    }
+  ],
+  "paths": {
+    "/users": {
+      "post": {
+        "summary": "Create new User",
+        "tags": [],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "409": {
+            "description": "Username already exists"
+          }
+        },
+        "operationId": "post-user",
+        "x-stoplight": {
+          "id": "ooftd9udzrjb3"
+        },
+        "description": "Add a new User to the system.",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserInDto"
+              }
+            }
+          }
+        }
+      },
+      "parameters": [],
+      "get": {
+        "summary": "Get all users with filters",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserOutDto",
+                    "x-stoplight": {
+                      "id": "ucwjptsdqfwgk"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-users",
+        "x-stoplight": {
+          "id": "wlceomywqn10z"
+        },
+        "description": "Get all users with the given filters.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "username",
+            "description": "Filter for the username"
+          },
+          {
+            "schema": {
+              "type": "integer"
+            },
+            "in": "query",
+            "name": "usersSize",
+            "description": "Maximum number of users that the endpoint can return",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "integer"
+            },
+            "in": "query",
+            "name": "page",
+            "description": "The cardinality of the subset with the given usersSize that the endpoint must return",
+            "required": true
+          }
+        ]
+      }
+    },
+    "/users/{userId}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/userId"
+        }
+      ],
+      "get": {
+        "summary": "Get User info by User ID",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "User Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserOutDto"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "id": 124,
+                      "username": "glanzi42",
+                      "firstName": "Genoveffa",
+                      "lastName": "Lanzi",
+                      "dateOfBirth": "1942-10-31",
+                      "email": "glanzi@example.com",
+                      "about": "I like hiking in the mountains.",
+                      "city": "Belluno"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User Not Found"
+          }
+        },
+        "operationId": "get-users-userId",
+        "description": "Retrieve the information of the user with the matching user ID.",
+        "x-stoplight": {
+          "id": "kgg2fccssicxt"
+        }
+      },
+      "put": {
+        "summary": "Modify User by User ID",
+        "tags": [],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "operationId": "put-users-userId",
+        "x-stoplight": {
+          "id": "5l91hqvktsw43"
+        },
+        "description": "Modify the information of the user with the matching user ID.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserInDto"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Authorization"
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Delete User by User ID",
+        "tags": [],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "operationId": "delete-users-userId",
+        "x-stoplight": {
+          "id": "rtmmf2wjh80d8"
+        },
+        "description": "Delete the user with the matching user ID.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Authorization"
+          }
+        ]
+      }
+    },
+    "/users/{userId}/profileImage": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/userId"
+        }
+      ],
+      "get": {
+        "summary": "Get User profile image by User ID",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not Found"
+          }
+        },
+        "operationId": "get-users-userId-profileImage",
+        "x-stoplight": {
+          "id": "3otkb8egpenj1"
+        },
+        "description": "Get the profile image of the user with the matching user ID."
+      },
+      "post": {
+        "summary": "Create User profile image by User ID",
+        "tags": [],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "User not Found"
+          }
+        },
+        "operationId": "post-users-userId-profileImage",
+        "x-stoplight": {
+          "id": "no7z3tux6owvh"
+        },
+        "description": "Add the profile image of the user with the matching user ID.",
+        "requestBody": {
+          "content": {
+            "image/png": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Authorization"
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Delete User profile image by User ID",
+        "tags": [],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "operationId": "delete-users-userId-profileImage",
+        "x-stoplight": {
+          "id": "imbh9zw4f5dor"
+        },
+        "description": "Delete the profile image of the user with the matching user ID.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Authorization"
+          }
+        ]
+      }
+    },
+    "/users/login": {
+      "post": {
+        "summary": "Log in User",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BearerToken"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Authentication failure"
+          }
+        },
+        "operationId": "post-login",
+        "x-stoplight": {
+          "id": "btol7os94b8bc"
+        },
+        "description": "Attempts to log in the user with the given username and password.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "username",
+                  "password"
+                ],
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "x-stoplight": {
+                      "id": "4q2ebi0fa56v5"
+                    }
+                  },
+                  "password": {
+                    "type": "string",
+                    "x-stoplight": {
+                      "id": "2igbqyytj3iut"
+                    },
+                    "format": "password"
+                  }
+                }
+              },
+              "examples": {
+                "Example 1": {
+                  "value": {
+                    "username": "glanzi42",
+                    "password": "pa$$word"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/logout": {
+      "post": {
+        "summary": "Log out User",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "operationId": "post-logout",
+        "x-stoplight": {
+          "id": "4caop5na384l5"
+        },
+        "description": "Logs out the user with the given username.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "x-stoplight": {
+                      "id": "85pg46uheypso"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Authorization"
+          }
+        ],
+        "x-internal": true
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UserOutDto": {
+        "title": "UserOutDto",
+        "type": "object",
+        "x-stoplight": {
+          "id": "l356ctonyg3t0"
+        },
+        "required": [
+          "id",
+          "username",
+          "firstName",
+          "lastName"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique identifier for the given user.",
+            "x-stoplight": {
+              "id": "xvi89uk2kvpdd"
+            }
+          },
+          "username": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "ow1q7vxtylgih"
+            }
+          },
+          "firstName": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "6zdy8v4ojgtl2"
+            }
+          },
+          "lastName": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "lbopc0qmavte4"
+            }
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "format": "date",
+            "example": "1997-10-31",
+            "x-stoplight": {
+              "id": "4b7bijllywwx5"
+            }
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "x-stoplight": {
+              "id": "jj9qoafph97zy"
+            }
+          },
+          "about": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "nkzla6wfl7ylo"
+            },
+            "description": "Basic information about the given user."
+          },
+          "city": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "ak515m6op784f"
+            },
+            "description": "Current city of residence of the given user."
+          }
+        },
+        "examples": [
+          {
+            "id": 124,
+            "username": "glanzi42",
+            "firstName": "Genoveffa",
+            "lastName": "Lanzi",
+            "dateOfBirth": "1942-10-31",
+            "email": "glanzi@example.com",
+            "about": "I like hiking in the mountains.",
+            "city": "Belluno"
+          }
+        ],
+        "description": "Represents the User Dto object in output from the endpoints."
+      },
+      "UserInDto": {
+        "title": "UserInDto",
+        "x-stoplight": {
+          "id": "gmw31szrhys8x"
+        },
+        "type": "object",
+        "examples": [
+          {
+            "username": "glanzi42",
+            "password": "pa$$word",
+            "firstName": "Genoveffa",
+            "lastName": "Lanzi",
+            "dateOfBirth": "1942-10-31",
+            "email": "glanzi@example.com",
+            "about": "I like hiking in the mountains.",
+            "city": "Belluno"
+          }
+        ],
+        "description": "Represents the User Dto object in input to the endpoints.",
+        "required": [
+          "username",
+          "password",
+          "firstName",
+          "lastName"
+        ],
+        "properties": {
+          "username": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "wyyb9nco05kym"
+            },
+            "description": "Unique"
+          },
+          "password": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "jnagoxcnmuevo"
+            },
+            "format": "password"
+          },
+          "firstName": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "i1visfnsg5pb9"
+            }
+          },
+          "lastName": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "5wrm3igujg0s6"
+            }
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "n117sbhmrsloi"
+            },
+            "format": "date"
+          },
+          "email": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "y36v1vv3t0qdp"
+            },
+            "format": "email",
+            "description": "not unique?"
+          },
+          "about": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "zwtn6rnphw6na"
+            },
+            "description": "Basic information about the user."
+          },
+          "city": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "a3x84dyyxwclz"
+            },
+            "description": "Current city of residence of the user."
+          }
+        }
+      },
+      "BearerToken": {
+        "title": "BearerToken",
+        "x-stoplight": {
+          "id": "xuk1cs4qdybur"
+        },
+        "type": "string",
+        "description": "Represents the bearer token that authenticates a user in the system.",
+        "examples": [
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        ]
+      }
+    },
+    "securitySchemes": {},
+    "parameters": {
+      "userId": {
+        "name": "userId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer"
+        },
+        "description": "The ID that identifies a particular user."
+      },
+      "Authorization": {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": "^Bearer\\s"
+        },
+        "description": "Bearer token for authentication"
+      }
+    }
+  }
+}
