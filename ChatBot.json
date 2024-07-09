@@ -1,0 +1,80 @@
+{
+  "openapi": "3.1.0",
+  "x-stoplight": {
+    "id": "huo10d6h0v39v"
+  },
+  "info": {
+    "title": "ChatBot",
+    "version": "1.0",
+    "summary": "API for ChatBot Service",
+    "description": "Manages the interrogation to the ChatBot to request data about the trip destinations."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api"
+    }
+  ],
+  "paths": {
+    "/chatbot/query": {
+      "post": {
+        "summary": "Query chatbot",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "result"
+                  ],
+                  "properties": {
+                    "result": {
+                      "type": "string",
+                      "x-stoplight": {
+                        "id": "9r2le4icyjzc4"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "operationId": "post-chatbot-query",
+        "x-stoplight": {
+          "id": "yr96phalast28"
+        },
+        "description": "Send a query to the chatbot to ask some details about a trip destination.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "query"
+                ],
+                "properties": {
+                  "query": {
+                    "type": "string",
+                    "x-stoplight": {
+                      "id": "r21bndxkrv6v8"
+                    }
+                  }
+                }
+              },
+              "examples": {}
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {}
+  }
+}
