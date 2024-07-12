@@ -12,7 +12,6 @@ public class CustomErrorResponse {
     public CustomErrorResponse(Date timestamp, int status, String error, String message, String path) {
         this.timestamp = timestamp;
         this.status = status;
-        this.error = error;
         this.message = message;
         this.path = path;
     }
@@ -32,14 +31,6 @@ public class CustomErrorResponse {
 
     public void setStatus(int status) {
         this.status = status;
-    }
-
-    public String getError() {
-        return error;
-    }
-
-    public void setError(String error) {
-        this.error = error;
     }
 
     public String getMessage() {
