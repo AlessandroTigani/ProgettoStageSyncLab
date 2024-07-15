@@ -1,7 +1,10 @@
 package com.synclab.triphippie.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class UserProfile {
@@ -32,6 +35,15 @@ public class UserProfile {
 
     @Column(length = 50)
     private String city;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_profile_preference_tag",
+            joinColumns = @JoinColumn(name = "user_profile_id"),
+            inverseJoinColumns = @JoinColumn(name = "preference_tag_id")
+    )
+    @JsonIgnore
+    private Set<PreferenceTag> tags = new HashSet<>();
 
     public UserProfile() {}
 
@@ -121,5 +133,18 @@ public class UserProfile {
                 ", about='" + about + '\'' +
                 ", city='" + city + '\'' +
                 '}';
+    }
+
+    public Set<PreferenceTag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<PreferenceTag> tags) {
+        this.tags = tags;
+    }
+
+    public void removeTag(PreferenceTag tag) {
+        this.tags.remove(tag);
+        tag.getUsers().remove(this);
     }
 }

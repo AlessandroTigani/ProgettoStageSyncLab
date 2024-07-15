@@ -1,5 +1,6 @@
 package com.synclab.triphippie.controller;
 
+import com.synclab.triphippie.dto.PreferenceTagDTO;
 import com.synclab.triphippie.dto.TokenDTORequest;
 import com.synclab.triphippie.dto.UserDTORequest;
 import com.synclab.triphippie.dto.UserDTOResponse;
@@ -20,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -167,6 +169,51 @@ public class UserController {
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+
+    @PostMapping("/tags/{userProfileId}")
+    public ResponseEntity<String> addTagToUserProfile(
+            @PathVariable int userProfileId,
+            @RequestHeader(value = "Authorization", required = true) String authorizationHeader,
+            @Valid @RequestBody List<PreferenceTagDTO> preferenceTagDTOs
+    ) {
+        UserProfile userProfileFound = userService.findById(userProfileId);
+        if(!jwtUtil.validateToken(authorizationHeader, userProfileFound.getUsername())){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        userService.addPreferenceTagToUserProfile(userProfileId, preferenceTagDTOs);
+        return new ResponseEntity<>("Created", HttpStatus.CREATED);
+    }
+
+
+    @GetMapping("/tags/{userId}")
+    public ResponseEntity<Object> getAllUserPreferenceTagsByUserId(
+            @PathVariable("userId") int userId,
+            @RequestHeader(value = "Authorization", required = true) String authorizationHeader
+    ){
+        UserProfile userProfileFound = userService.findById(userId);
+        if(!jwtUtil.validateToken(authorizationHeader, userProfileFound.getUsername())){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        List<PreferenceTagDTO> preferenceTagDTOs = userService.getAllUserPreferenceTags(userId);
+        return new ResponseEntity<>(preferenceTagDTOs, HttpStatus.FOUND);
+    }
+
+
+    @DeleteMapping("/tags/{userId}/{preferenceId}")
+    public ResponseEntity<String> deletePreferenceTagFromUserProfile(
+            @PathVariable("userId") int userId,
+            @PathVariable("preferenceId") int preferenceId,
+            @RequestHeader(value = "Authorization", required = true) String authorizationHeader
+    ){
+        UserProfile userProfileFound = userService.findById(userId);
+        if(!jwtUtil.validateToken(authorizationHeader, userProfileFound.getUsername())){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        userService.removePreferenceByIdFromUser(userId, preferenceId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 
 
 }

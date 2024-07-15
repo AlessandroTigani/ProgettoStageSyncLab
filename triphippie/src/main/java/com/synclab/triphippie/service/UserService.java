@@ -1,14 +1,20 @@
 package com.synclab.triphippie.service;
 
+import com.synclab.triphippie.dto.PreferenceTagDTO;
 import com.synclab.triphippie.exception.EntryNotFoundException;
 import com.synclab.triphippie.exception.UniqueFieldException;
+import com.synclab.triphippie.model.PreferenceTag;
 import com.synclab.triphippie.model.UserProfile;
+import com.synclab.triphippie.repository.PreferenceTagRepository;
 import com.synclab.triphippie.repository.UserRepository;
 import com.synclab.triphippie.util.HashUtil;
+import com.synclab.triphippie.util.PreferenceTagConverter;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,10 +22,14 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final String filePath;
+    private final PreferenceTagRepository preferenceTagRepository;
+    private final PreferenceTagConverter preferenceTagConverter;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PreferenceTagRepository preferenceTagRepository, PreferenceTagConverter preferenceTagConverter) {
         this.userRepository = userRepository;
         this.filePath = System.getProperty("IMAGE_PATH");
+        this.preferenceTagRepository = preferenceTagRepository;
+        this.preferenceTagConverter = preferenceTagConverter;
     }
 
     public void save(UserProfile userProfile) {
@@ -149,5 +159,53 @@ public class UserService {
         if (!directory.delete()) {
             throw new IOException("Failed to delete directory: " + directory.getAbsolutePath());
         }
+    }
+
+
+    @Transactional
+    public void addPreferenceTagToUserProfile(int userProfileId, List<PreferenceTagDTO> preferenceTagDtos) {
+        Optional<UserProfile> userProfileOptional = userRepository.findById(userProfileId);
+        if (userProfileOptional.isEmpty()){
+            throw new EntryNotFoundException("User not found");
+        }
+        for (PreferenceTagDTO preferenceTagDto : preferenceTagDtos) {
+            Optional<PreferenceTag> preferenceTagOptional = preferenceTagRepository.findById(preferenceTagDto.getId());
+            if (preferenceTagOptional.isPresent()) {
+                UserProfile userProfile = userProfileOptional.get();
+                PreferenceTag preferenceTag = preferenceTagOptional.get();
+                userProfile.getTags().add(preferenceTag);
+                userRepository.save(userProfile);
+            }
+            else {
+                throw new EntryNotFoundException("Preference not found");
+            }
+        }
+    }
+
+
+    public List<PreferenceTagDTO> getAllUserPreferenceTags(int userProfileId) {
+        UserProfile userProfile = userRepository.findById(userProfileId).orElseThrow(
+                () -> new EntryNotFoundException("User not found")
+        );
+        List<PreferenceTagDTO> preferenceTagDTOs = new ArrayList<>();
+        for (PreferenceTag preferenceTag : userProfile.getTags()) {
+            PreferenceTagDTO tagDTO = preferenceTagConverter.toDto(preferenceTag);
+            preferenceTagDTOs.add(tagDTO);
+        }
+        return preferenceTagDTOs;
+    }
+
+
+    @Transactional
+    public void removePreferenceByIdFromUser(int userProfileId, int preferenceId) {
+        UserProfile userProfile = userRepository.findById(userProfileId).orElseThrow(
+                () -> new EntryNotFoundException("User not found")
+        );
+        PreferenceTag preferenceTag = preferenceTagRepository.findById(preferenceId).orElseThrow(
+                () -> new EntryNotFoundException("Preference not found")
+        );
+        userProfile.removeTag(preferenceTag);
+        userRepository.save(userProfile);
+        preferenceTagRepository.save(preferenceTag);
     }
 }

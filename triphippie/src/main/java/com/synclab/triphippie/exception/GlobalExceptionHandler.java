@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
      * Handle errors caused by the violation of unique constraints.
      */
     @ExceptionHandler(UniqueFieldException.class)
-    public ResponseEntity<Object> handleUniqueFieldException(UniqueFieldException ex) {
+    public ResponseEntity<String> handleUniqueFieldException(UniqueFieldException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
      * Handle issues related to the validation process of data within a DTO.
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
      * This exception is thrown when the argument provided in a request cannot be converted to the required type.
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<Object> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+    public ResponseEntity<String> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
      * Notify the absence of the desired element.
      */
     @ExceptionHandler(EntryNotFoundException.class)
-    public ResponseEntity<Object> handleEntryNotFoundException(EntryNotFoundException ex, WebRequest request) {
+    public ResponseEntity<String> handleEntryNotFoundException(EntryNotFoundException ex, WebRequest request) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
@@ -55,7 +55,7 @@ public class GlobalExceptionHandler {
      * Notify the absence of the Authorization Header
      */
     @ExceptionHandler(MissingRequestHeaderException.class)
-    public ResponseEntity<Object> handleMissingRequestHeaderException(MissingRequestHeaderException ex, WebRequest request) {
+    public ResponseEntity<String> handleMissingRequestHeaderException(MissingRequestHeaderException ex, WebRequest request) {
         return new ResponseEntity<>("Forbidden", HttpStatus.FORBIDDEN);
     }
 
