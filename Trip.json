@@ -471,16 +471,6 @@
         "x-stoplight": {
           "id": "6a4qnyc15ur62"
         },
-        "examples": [
-          {
-            "id": 0,
-            "userId": "123",
-            "startDateTime": "2019-08-24T14:15:22Z",
-            "endDateTime": "2019-08-29T14:15:22Z",
-            "preferencies": "Participants that love hiking",
-            "description": "Hike in the mountains"
-          }
-        ],
         "required": [
           "id",
           "userId",
@@ -529,24 +519,16 @@
               "id": "961x058ed8qcb"
             }
           },
-          "firstLocationCoordinate": {
-            "type": "object",
+          "firstLocationLongitude": {
+            "type": "number",
             "x-stoplight": {
               "id": "i2j0i6970mbtk"
-            },
-            "properties": {
-              "x": {
-                "type": "number",
-                "x-stoplight": {
-                  "id": "jipti7axmcci8"
-                }
-              },
-              "y": {
-                "type": "number",
-                "x-stoplight": {
-                  "id": "7s8sin8jq38qo"
-                }
-              }
+            }
+          },
+          "firstLocationLatitude": {
+            "type": "number",
+            "x-stoplight": {
+              "id": "dkcraf4cpzf6w"
             }
           },
           "lastLocationName": {
@@ -555,27 +537,35 @@
               "id": "kdtn01sdjrug8"
             }
           },
-          "lastLocationCoordinate": {
-            "type": "object",
+          "lastLocationLongitude": {
+            "type": "number",
             "x-stoplight": {
               "id": "yxylfgjholzy8"
-            },
-            "properties": {
-              "x": {
-                "type": "number",
-                "x-stoplight": {
-                  "id": "gxl8lk95jafyb"
-                }
-              },
-              "y": {
-                "type": "number",
-                "x-stoplight": {
-                  "id": "rpvdec5jcpyqk"
-                }
-              }
+            }
+          },
+          "lastLocationLatitude": {
+            "type": "number",
+            "x-stoplight": {
+              "id": "plox1nzskg475"
             }
           }
-        }
+        },
+        "examples": [
+          {
+            "id": 1,
+            "userId": "traveler456",
+            "startDateTime": "2019-08-24T08:00:00",
+            "endDateTime": "2019-08-30T20:00:00",
+            "preferences": "guided tours, vegetarian meals, historic sites",
+            "description": "Vacation trip to explore historical landmarks and enjoy local cuisine.",
+            "firstLocationName": "Rome, Italy",
+            "firstLocationLongitude": 12.4964,
+            "firstLocationLatitude": 41.9028,
+            "lastLocationName": "Paris, France",
+            "lastLocationLongitude": 2.3522,
+            "lastLocationLatitude": 48.8566
+          }
+        ]
       },
       "TripInDto": {
         "type": "object",
@@ -586,11 +576,17 @@
         },
         "examples": [
           {
-            "userId": "123",
-            "startDateTime": "2019-08-24T14:15:22Z",
-            "endDateTime": "2019-08-29T14:15:22Z",
-            "preferencies": "Participants that love hiking",
-            "description": "Hike in the mountains"
+            "userId": "traveler456",
+            "startDateTime": "2019-08-24T08:00:00",
+            "endDateTime": "2019-08-30T20:00:00",
+            "preferences": "guided tours, vegetarian meals, historic sites",
+            "description": "Vacation trip to explore historical landmarks and enjoy local cuisine.",
+            "firstLocationName": "Rome, Italy",
+            "firstLocationLongitude": 12.4964,
+            "firstLocationLatitude": 41.9028,
+            "lastLocationName": "Paris, France",
+            "lastLocationLongitude": 2.3522,
+            "lastLocationLatitude": 48.8566
           }
         ],
         "required": [
@@ -643,24 +639,16 @@
               "id": "h2lgyj6c78gl5"
             }
           },
-          "firstLocationCoordinate": {
-            "type": "object",
+          "firstLocationLongitude": {
+            "type": "number",
             "x-stoplight": {
               "id": "ez9ys5g4wiicy"
-            },
-            "properties": {
-              "x": {
-                "type": "number",
-                "x-stoplight": {
-                  "id": "hq1mwj5bsxzgb"
-                }
-              },
-              "y": {
-                "type": "number",
-                "x-stoplight": {
-                  "id": "89ru56no1tk29"
-                }
-              }
+            }
+          },
+          "firstLocationLatitude": {
+            "type": "number",
+            "x-stoplight": {
+              "id": "t25x3t65l3wa8"
             }
           },
           "lastLocationName": {
@@ -669,24 +657,16 @@
               "id": "egsh1cghajudw"
             }
           },
-          "lastLocationCoordinate": {
-            "type": "object",
+          "lastLocationLongitude": {
+            "type": "number",
             "x-stoplight": {
               "id": "ex2caz8uld8wu"
-            },
-            "properties": {
-              "x": {
-                "type": "number",
-                "x-stoplight": {
-                  "id": "a2ntsqtaj9szs"
-                }
-              },
-              "y": {
-                "type": "number",
-                "x-stoplight": {
-                  "id": "6s3np96l4lbo2"
-                }
-              }
+            }
+          },
+          "lastLocationLatitude": {
+            "type": "number",
+            "x-stoplight": {
+              "id": "vt40g9b7kv4fp"
             }
           }
         }
