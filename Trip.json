@@ -485,7 +485,8 @@
           "id",
           "userId",
           "startDateTime",
-          "endDateTime"
+          "endDateTime",
+          "firstLocationName"
         ],
         "properties": {
           "id": {
@@ -521,6 +522,58 @@
               "id": "clnqbhxws9kux"
             },
             "description": "A brief description of the trip."
+          },
+          "firstLocationName": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "961x058ed8qcb"
+            }
+          },
+          "firstLocationCoordinate": {
+            "type": "object",
+            "x-stoplight": {
+              "id": "i2j0i6970mbtk"
+            },
+            "properties": {
+              "x": {
+                "type": "number",
+                "x-stoplight": {
+                  "id": "jipti7axmcci8"
+                }
+              },
+              "y": {
+                "type": "number",
+                "x-stoplight": {
+                  "id": "7s8sin8jq38qo"
+                }
+              }
+            }
+          },
+          "lastLocationName": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "kdtn01sdjrug8"
+            }
+          },
+          "lastLocationCoordinate": {
+            "type": "object",
+            "x-stoplight": {
+              "id": "yxylfgjholzy8"
+            },
+            "properties": {
+              "x": {
+                "type": "number",
+                "x-stoplight": {
+                  "id": "gxl8lk95jafyb"
+                }
+              },
+              "y": {
+                "type": "number",
+                "x-stoplight": {
+                  "id": "rpvdec5jcpyqk"
+                }
+              }
+            }
           }
         }
       },
@@ -543,7 +596,8 @@
         "required": [
           "userId",
           "startDate",
-          "endDate"
+          "endDate",
+          "firstLocationName"
         ],
         "properties": {
           "userId": {
@@ -582,6 +636,58 @@
               "id": "rq1hkbjy8fi7x"
             },
             "description": "A brief description of the trip."
+          },
+          "firstLocationName": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "h2lgyj6c78gl5"
+            }
+          },
+          "firstLocationCoordinate": {
+            "type": "object",
+            "x-stoplight": {
+              "id": "ez9ys5g4wiicy"
+            },
+            "properties": {
+              "x": {
+                "type": "number",
+                "x-stoplight": {
+                  "id": "hq1mwj5bsxzgb"
+                }
+              },
+              "y": {
+                "type": "number",
+                "x-stoplight": {
+                  "id": "89ru56no1tk29"
+                }
+              }
+            }
+          },
+          "lastLocationName": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "egsh1cghajudw"
+            }
+          },
+          "lastLocationCoordinate": {
+            "type": "object",
+            "x-stoplight": {
+              "id": "ex2caz8uld8wu"
+            },
+            "properties": {
+              "x": {
+                "type": "number",
+                "x-stoplight": {
+                  "id": "a2ntsqtaj9szs"
+                }
+              },
+              "y": {
+                "type": "number",
+                "x-stoplight": {
+                  "id": "6s3np96l4lbo2"
+                }
+              }
+            }
           }
         }
       },
