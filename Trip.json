@@ -685,7 +685,8 @@
           }
         ],
         "required": [
-          "destination"
+          "destination",
+          "tripId"
         ],
         "properties": {
           "destination": {
@@ -711,6 +712,12 @@
             "x-stoplight": {
               "id": "4px7atlvwcrtw"
             }
+          },
+          "tripId": {
+            "type": "integer",
+            "x-stoplight": {
+              "id": "8tipw69nbhm6d"
+            }
           }
         }
       },
@@ -730,7 +737,8 @@
         ],
         "required": [
           "id",
-          "destination"
+          "destination",
+          "tripId"
         ],
         "properties": {
           "id": {
@@ -755,6 +763,12 @@
             "type": "number",
             "x-stoplight": {
               "id": "6bb2scf53qzd9"
+            }
+          },
+          "tripId": {
+            "type": "integer",
+            "x-stoplight": {
+              "id": "cigh68t4lyvld"
             }
           }
         }
