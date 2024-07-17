@@ -218,6 +218,35 @@
         ]
       }
     },
+    "/trips/completed": {
+      "get": {
+        "summary": "Get all completed trips",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TripOutDto",
+                    "x-stoplight": {
+                      "id": "jxpxbbc6qno0q"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-trips-completed",
+        "x-stoplight": {
+          "id": "7nqk4x7hvemao"
+        },
+        "description": "Get all completed trips."
+      }
+    },
     "/journeys": {
       "parameters": [],
       "get": {
@@ -432,9 +461,19 @@
         ]
       }
     },
-    "/trips/completed": {
+    "/journeys/{tripId}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "tripId",
+          "in": "path",
+          "required": true
+        }
+      ],
       "get": {
-        "summary": "Get all completed trips",
+        "summary": "Get Journey by Trip ID",
         "tags": [],
         "responses": {
           "200": {
@@ -442,23 +481,40 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TripOutDto",
-                    "x-stoplight": {
-                      "id": "jxpxbbc6qno0q"
-                    }
-                  }
+                  "$ref": "#/components/schemas/JourneyOutDto"
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
           }
         },
-        "operationId": "get-trips-completed",
+        "operationId": "get-journey-tripId",
         "x-stoplight": {
-          "id": "7nqk4x7hvemao"
+          "id": "n64yqwbtlfb81"
         },
-        "description": "Get all completed trips."
+        "description": "Get the information for a Journey that matches the Trip ID.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer token for authentication",
+            "required": true
+          }
+        ]
       }
     }
   },
