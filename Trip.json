@@ -678,6 +678,12 @@
         },
         "type": "object",
         "description": "Represents the Journey Dto object in input to the endpoints.",
+        "examples": [
+          {
+            "destination": "Verona",
+            "description": "Visit to the Museo Lapidario Maffeiano"
+          }
+        ],
         "required": [
           "destination"
         ],
@@ -693,14 +699,20 @@
             "x-stoplight": {
               "id": "iew2lrzh8y7hm"
             }
+          },
+          "destinationLongitude": {
+            "type": "number",
+            "x-stoplight": {
+              "id": "emypgfpu7mmk6"
+            }
+          },
+          "destinationLatitude": {
+            "type": "number",
+            "x-stoplight": {
+              "id": "4px7atlvwcrtw"
+            }
           }
-        },
-        "examples": [
-          {
-            "destination": "Verona",
-            "description": "Visit to the Museo Lapidario Maffeiano"
-          }
-        ]
+        }
       },
       "JourneyOutDto": {
         "title": "JourneyOutDto",
@@ -709,6 +721,13 @@
         },
         "type": "object",
         "description": "Represents the Journey Dto object in output from the endpoints.",
+        "examples": [
+          {
+            "id": 0,
+            "destination": "Verona",
+            "description": "Visit to the Museo Lapidario Maffeiano"
+          }
+        ],
         "required": [
           "id",
           "destination"
@@ -725,15 +744,20 @@
           },
           "description": {
             "type": "string"
+          },
+          "destinationLongitude": {
+            "type": "number",
+            "x-stoplight": {
+              "id": "20pa9tk3y29e5"
+            }
+          },
+          "destinationLatitude": {
+            "type": "number",
+            "x-stoplight": {
+              "id": "6bb2scf53qzd9"
+            }
           }
-        },
-        "examples": [
-          {
-            "id": 0,
-            "destination": "Verona",
-            "description": "Visit to the Museo Lapidario Maffeiano"
-          }
-        ]
+        }
       }
     },
     "parameters": {
