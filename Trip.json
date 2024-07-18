@@ -443,6 +443,35 @@
         "description": "Get all completed trips."
       }
     },
+    "/trips/to-complete": {
+      "get": {
+        "summary": "Get all trips to complete",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TripOutDto",
+                    "x-stoplight": {
+                      "id": "hxw8t5oqxcbwq"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-trips-to-complete",
+        "x-stoplight": {
+          "id": "oap6pgroouc6g"
+        },
+        "description": "Get all trips planned but not yet completed"
+      }
+    },
     "/trips/vehicles": {
       "get": {
         "summary": "Get vehicles options",
