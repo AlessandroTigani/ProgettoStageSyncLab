@@ -416,48 +416,14 @@
         "x-internal": true
       }
     },
-    "/users/preference/{userId}": {
+    "/users/preference-tags/{userId}": {
       "post": {
         "summary": "Set new user preference",
         "tags": [],
         "responses": {
           "201": {
             "description": "Created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "userPreferenceId"
-                  ],
-                  "properties": {
-                    "userPreferenceId": {
-                      "type": "array",
-                      "x-stoplight": {
-                        "id": "2v9fyus1wtagi"
-                      },
-                      "items": {
-                        "x-stoplight": {
-                          "id": "fwwwiggm20l21"
-                        },
-                        "type": "integer",
-                        "example": "1, 2"
-                      }
-                    }
-                  }
-                },
-                "examples": {
-                  "Example 1": {
-                    "value": {
-                      "userPreferenceId": [
-                        1,
-                        2
-                      ]
-                    }
-                  }
-                }
-              }
-            }
+            "content": {}
           },
           "401": {
             "description": "Unauthorized"
@@ -482,9 +448,32 @@
             },
             "in": "header",
             "name": "Authorization",
-            "description": "Authorization token"
+            "description": "Authorization token",
+            "required": true
           }
-        ]
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TripType",
+                  "x-stoplight": {
+                    "id": "9fgc0j1gnse5r"
+                  }
+                }
+              },
+              "examples": {
+                "Example 1": {
+                  "value": [
+                    "FAMIGLIE"
+                  ]
+                }
+              }
+            }
+          }
+        }
       },
       "get": {
         "summary": "Get all user preferences",
@@ -495,15 +484,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserPreferenceResponse"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TripType",
+                    "x-stoplight": {
+                      "id": "9dg60oxy6siyh"
+                    }
+                  }
                 },
                 "examples": {
                   "Example 1": {
-                    "value": {
-                      "idUser": 1,
-                      "idUserPreference": 1,
-                      "preferenceName": "Mare"
-                    }
+                    "value": [
+                      "FAMIGLIE"
+                    ]
                   }
                 }
               }
@@ -531,7 +524,8 @@
             },
             "in": "header",
             "name": "Authorization",
-            "description": "Authorization token"
+            "description": "Authorization token",
+            "required": true
           }
         ]
       },
@@ -592,13 +586,100 @@
       "parameters": [
         {
           "schema": {
-            "type": "string"
+            "type": "integer"
           },
           "name": "userId",
           "in": "path",
           "required": true
         }
-      ]
+      ],
+      "delete": {
+        "summary": "Delete all user preferences",
+        "tags": [],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "User not Found"
+          }
+        },
+        "operationId": "delete-users-preference-userId",
+        "x-stoplight": {
+          "id": "xj35mtu8wkdax"
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "Authorization",
+            "description": "Authorization token",
+            "required": true
+          }
+        ],
+        "description": "Delete all the preferences of a user"
+      }
+    },
+    "/users/preference-vehicles/{userId}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "integer"
+          },
+          "name": "userId",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "get": {
+        "summary": "Get all user preferences",
+        "tags": [],
+        "responses": {
+          "302": {
+            "description": "Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TripVehicle",
+                    "x-stoplight": {
+                      "id": "sckidyv4m9ncn"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "User Not Found"
+          }
+        },
+        "operationId": "get-users-preference-vehicles-userId",
+        "x-stoplight": {
+          "id": "ryclm209jj5y4"
+        },
+        "description": "Return all the preferred vehicles associated to a single user",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Authorization"
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -823,38 +904,31 @@
         ],
         "description": "List of possible tags used to define the user's preferences"
       },
-      "UserPreference": {
-        "title": "UserPreference",
+      "TripType": {
+        "title": "TripType",
         "x-stoplight": {
-          "id": "xmok8jtlr2ruk"
+          "id": "x6lttg7bqf35j"
         },
-        "type": "object",
-        "required": [
-          "idUser",
-          "idUserPreference"
-        ],
-        "properties": {
-          "idUser": {
-            "type": "integer",
-            "x-stoplight": {
-              "id": "esqibyiyxs4d1"
-            },
-            "example": 1
-          },
-          "idUserPreference": {
-            "type": "integer",
-            "x-stoplight": {
-              "id": "8h8ycb3sn0dxo"
-            },
-            "example": 1
-          },
-          "preferenceName": {
-            "type": "string",
-            "x-stoplight": {
-              "id": "dqeyxwuywclku"
-            }
-          }
-        }
+        "enum": [
+          "FAMIGLIE",
+          "CULTURALE",
+          "ESCURSIONE",
+          "RELAX",
+          "DEGUSTAZIONE"
+        ]
+      },
+      "TripVehicle": {
+        "title": "VehicleType",
+        "x-stoplight": {
+          "id": "bu0zbn2hhqhf2"
+        },
+        "enum": [
+          "AUTO",
+          "AEREO",
+          "BICICLETTA",
+          "TRENO",
+          "MOTOCICLO"
+        ]
       }
     },
     "securitySchemes": {},
