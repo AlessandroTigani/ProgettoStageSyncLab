@@ -1,17 +1,18 @@
 package com.synclab.triphippie.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.apache.catalina.User;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-public class PreferenceTag {
-
+public class PreferenceVehicle {
     @Id
     @Size(min=2, max = 20, message = "The length of the name must be between 2 and 20 characters.")
     @NotNull(message = "Name is required.")
@@ -23,17 +24,18 @@ public class PreferenceTag {
     private String description;
 
 
-    @ManyToMany(mappedBy = "tags")
+    @ManyToMany(mappedBy = "vehicles")
     @JsonIgnore
     private Set<UserProfile> users = new HashSet<>();
 
 
-    public PreferenceTag() {}
+    public PreferenceVehicle() {}
 
-    public PreferenceTag(String name, String description) {
+    public PreferenceVehicle(String name, String description) {
         this.name = name;
         this.description = description;
     }
+
 
     public String getDescription() {
         return description;

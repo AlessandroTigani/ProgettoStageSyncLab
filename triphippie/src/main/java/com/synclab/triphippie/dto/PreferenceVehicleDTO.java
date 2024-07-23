@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public class PreferenceTagDTO {
+public class PreferenceVehicleDTO {
 
     @NotNull(message = "Name cannot be null")
     @NotBlank(message = "Name is required")
@@ -15,16 +15,16 @@ public class PreferenceTagDTO {
     @Size(max = 255, message = "The length of the description must be less than 255 characters.")
     private String description;
 
-    public PreferenceTagDTO(String name, String description) {
+    public PreferenceVehicleDTO(String name, String description) {
         this.name = name;
         this.description = description;
     }
 
-    public PreferenceTagDTO(String name){
+    public PreferenceVehicleDTO(String name){
         this.name = name;
     }
 
-    public PreferenceTagDTO() {}
+    public PreferenceVehicleDTO() {}
 
     public String getName() {
         return name;

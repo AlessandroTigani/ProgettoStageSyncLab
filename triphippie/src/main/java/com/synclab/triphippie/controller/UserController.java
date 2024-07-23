@@ -1,16 +1,17 @@
 package com.synclab.triphippie.controller;
 
-import com.synclab.triphippie.dto.PreferenceTagDTO;
-import com.synclab.triphippie.dto.TokenDTORequest;
-import com.synclab.triphippie.dto.UserDTORequest;
-import com.synclab.triphippie.dto.UserDTOResponse;
+import com.synclab.triphippie.dto.*;
 import com.synclab.triphippie.model.UserProfile;
 import com.synclab.triphippie.service.UserService;
 import com.synclab.triphippie.util.JwtUtil;
 import com.synclab.triphippie.util.UserConverter;
+import org.apache.catalina.User;
 import org.springframework.core.io.Resource;
 import jakarta.validation.Valid;
 import org.springframework.core.io.UrlResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,41 +55,46 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTOResponse> getById(@PathVariable("id") int id) {
+    public ResponseEntity<UserDTOResponse> getById(@PathVariable("id") Long id) {
         UserProfile userProfile = userService.findById(id);
         UserDTOResponse userProfileDTO = userConverter.toDto(userProfile);
         return ResponseEntity.ok(userProfileDTO);
     }
 
-    /*
+
     @GetMapping
-    public ResponseEntity<UserProfile> getAllWithFilters(
-        @RequestParam(value = "username", required = false) String username,
-        @RequestParam(value = "usersSize", required = true) Integer usersSize,
-        @RequestParam(value = "page", required = true) Integer page
-    ) {
-        return ResponseEntity.status(HttpStatus.FOUND).build();
+    public List<UserDTOResponse> getUsersWithFilters(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "userSize", defaultValue = "10") int size,
+            @RequestParam(name = "username", required = false) String username) {
+        Pageable pageable = PageRequest.of(page, size);
+        List<UserProfile> userProfiles = userService.getUsers(username, pageable);
+        List<UserDTOResponse> userDTOResponses = new ArrayList<>();
+        for(UserProfile userProfile : userProfiles) {
+            userDTOResponses.add(userConverter.toDto(userProfile));
+        }
+        return userDTOResponses;
     }
-    */
+
 
     @PostMapping("/login")
-    public ResponseEntity<String> createAuthenticationToken(@RequestBody TokenDTORequest tokenDTORequest) {
-        Optional<UserProfile> user = userService.findByUsername(tokenDTORequest.getUsername());
+    public ResponseEntity<String> createAuthenticationToken(@RequestBody TokenDTO tokenDTO) {
+        Optional<UserProfile> user = userService.findByUsername(tokenDTO.getUsername());
         if (
             user.isEmpty() ||
-            !userService.verifyPassword(tokenDTORequest.getPassword(), user.get().getPassword())
+            !userService.verifyPassword(tokenDTO.getPassword(), user.get().getPassword())
         ) {
             return new ResponseEntity<>("Authentication failure", HttpStatus.BAD_REQUEST);
         }
         else {
-            String token = jwtUtil.generateToken(tokenDTORequest.getUsername());
+            String token = jwtUtil.generateToken(tokenDTO.getUsername(), user.get().getId());
             return new ResponseEntity<>(token, HttpStatus.OK);
         }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(
-            @PathVariable("id") int id,
+            @PathVariable("id") Long id,
             @RequestBody UserDTORequest userDTORequest,
             @RequestHeader(value = "Authorization", required = true) String authorizationHeader
     ) {
@@ -104,7 +111,7 @@ public class UserController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<Void> delete(
-            @PathVariable("id") int id,
+            @PathVariable("id") Long id,
             @RequestHeader(value = "Authorization", required = true) String authorizationHeader
     ) {
         UserProfile userProfileFound = userService.findById(id);
@@ -120,7 +127,7 @@ public class UserController {
     @PostMapping("/{id}/profileImage")
     public ResponseEntity<String> createProfileImage(
             @RequestParam("file") MultipartFile file,
-            @PathVariable("id") int id,
+            @PathVariable("id") Long id,
             @RequestHeader(value = "Authorization", required = true) String authorizationHeader
     ) throws IOException {
         if (file.isEmpty()) {
@@ -140,7 +147,7 @@ public class UserController {
 
 
     @GetMapping("/{id}/profileImage")
-    public ResponseEntity<Resource> getProfileImage(@PathVariable("id") int id) throws IOException {
+    public ResponseEntity<Resource> getProfileImage(@PathVariable("id") Long id) throws IOException {
         UserProfile userProfileFound = userService.findById(id);
         Path path = Paths.get(this.filePath + "/" + id + "/profileImage.png");
         // Load the resource
@@ -153,7 +160,7 @@ public class UserController {
 
     @DeleteMapping("/{id}/profileImage")
     public ResponseEntity<String> deleteProfileImage(
-            @PathVariable("id") int id,
+            @PathVariable("id") Long id,
             @RequestHeader(value = "Authorization", required = true) String authorizationHeader
     ) throws IOException {
         UserProfile userProfileFound = userService.findById(id);
@@ -171,9 +178,9 @@ public class UserController {
     }
 
 
-    @PostMapping("/tags/{userProfileId}")
-    public ResponseEntity<String> addTagToUserProfile(
-            @PathVariable int userProfileId,
+    @PostMapping("/preference-tags/{userProfileId}")
+    public ResponseEntity<String> addTagsToUserProfile(
+            @PathVariable Long userProfileId,
             @RequestHeader(value = "Authorization", required = true) String authorizationHeader,
             @Valid @RequestBody List<PreferenceTagDTO> preferenceTagDTOs
     ) {
@@ -186,9 +193,9 @@ public class UserController {
     }
 
 
-    @GetMapping("/tags/{userId}")
+    @GetMapping("/preference-tags/{userId}")
     public ResponseEntity<Object> getAllUserPreferenceTagsByUserId(
-            @PathVariable("userId") int userId,
+            @PathVariable("userId") Long userId,
             @RequestHeader(value = "Authorization", required = true) String authorizationHeader
     ){
         UserProfile userProfileFound = userService.findById(userId);
@@ -200,20 +207,59 @@ public class UserController {
     }
 
 
-    @DeleteMapping("/tags/{userId}/{preferenceId}")
+    @DeleteMapping("/preference-tags/{userId}")
     public ResponseEntity<String> deletePreferenceTagFromUserProfile(
-            @PathVariable("userId") int userId,
-            @PathVariable("preferenceId") int preferenceId,
+            @PathVariable("userId") Long userId,
             @RequestHeader(value = "Authorization", required = true) String authorizationHeader
     ){
         UserProfile userProfileFound = userService.findById(userId);
         if(!jwtUtil.validateToken(authorizationHeader, userProfileFound.getUsername())){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        userService.removePreferenceByIdFromUser(userId, preferenceId);
+        userService.removePreferenceTagFromUser(userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 
 
+    @PostMapping("/preference-vehicles/{userProfileId}")
+    public ResponseEntity<String> addVehiclesToUserProfile(
+            @PathVariable Long userProfileId,
+            @RequestHeader(value = "Authorization", required = true) String authorizationHeader,
+            @Valid @RequestBody List<PreferenceVehicleDTO> preferenceVehicleDTOs
+    ) {
+        UserProfile userProfileFound = userService.findById(userProfileId);
+        if(!jwtUtil.validateToken(authorizationHeader, userProfileFound.getUsername())){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        userService.addPreferenceVehiclesToUserProfile(userProfileId, preferenceVehicleDTOs);
+        return new ResponseEntity<>("Created", HttpStatus.CREATED);
+    }
+
+    @GetMapping("/preference-vehicles/{userId}")
+    public ResponseEntity<Object> getAllUserPreferenceVehiclesByUserId(
+            @PathVariable("userId") Long userId,
+            @RequestHeader(value = "Authorization", required = true) String authorizationHeader
+    ){
+        UserProfile userProfileFound = userService.findById(userId);
+        if(!jwtUtil.validateToken(authorizationHeader, userProfileFound.getUsername())){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        List<PreferenceVehicleDTO> preferenceVehicleDTOs = userService.getAllUserPreferenceVehicles(userId);
+        return new ResponseEntity<>(preferenceVehicleDTOs, HttpStatus.FOUND);
+    }
+
+
+    @DeleteMapping("/preference-vehicles/{userId}")
+    public ResponseEntity<String> deletePreferenceVehiclesFromUserProfile(
+            @PathVariable("userId") Long userId,
+            @RequestHeader(value = "Authorization", required = true) String authorizationHeader
+    ){
+        UserProfile userProfileFound = userService.findById(userId);
+        if(!jwtUtil.validateToken(authorizationHeader, userProfileFound.getUsername())){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        userService.removePreferenceVehiclesFromUser(userId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

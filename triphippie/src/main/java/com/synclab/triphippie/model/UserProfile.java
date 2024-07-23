@@ -10,7 +10,7 @@ import java.util.Set;
 public class UserProfile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(unique = true, nullable = false, length = 50)
     private String username;
@@ -40,20 +40,29 @@ public class UserProfile {
     @JoinTable(
             name = "user_profile_preference_tag",
             joinColumns = @JoinColumn(name = "user_profile_id"),
-            inverseJoinColumns = @JoinColumn(name = "preference_tag_id")
+            inverseJoinColumns = @JoinColumn(name = "preference_tag_name")
     )
     @JsonIgnore
     private Set<PreferenceTag> tags = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_profile_preference_vehicle",
+            joinColumns = @JoinColumn(name = "user_profile_id"),
+            inverseJoinColumns = @JoinColumn(name = "preference_vehicle_name")
+    )
+    @JsonIgnore
+    private Set<PreferenceVehicle> vehicles = new HashSet<>();
 
     public UserProfile() {}
 
     // Getters and setters
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -146,5 +155,13 @@ public class UserProfile {
     public void removeTag(PreferenceTag tag) {
         this.tags.remove(tag);
         tag.getUsers().remove(this);
+    }
+
+    public Set<PreferenceVehicle> getVehicles() {
+        return vehicles;
+    }
+
+    public void setVehicles(Set<PreferenceVehicle> vehicles) {
+        this.vehicles = vehicles;
     }
 }

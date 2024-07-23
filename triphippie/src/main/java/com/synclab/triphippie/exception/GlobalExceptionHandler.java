@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -46,7 +47,7 @@ public class GlobalExceptionHandler {
      * Notify the absence of the desired element.
      */
     @ExceptionHandler(EntryNotFoundException.class)
-    public ResponseEntity<String> handleEntryNotFoundException(EntryNotFoundException ex, WebRequest request) {
+    public ResponseEntity<String> handleEntryNotFoundException(EntryNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
@@ -55,10 +56,15 @@ public class GlobalExceptionHandler {
      * Notify the absence of the Authorization Header
      */
     @ExceptionHandler(MissingRequestHeaderException.class)
-    public ResponseEntity<String> handleMissingRequestHeaderException(MissingRequestHeaderException ex, WebRequest request) {
+    public ResponseEntity<String> handleMissingRequestHeaderException(MissingRequestHeaderException ex) {
         return new ResponseEntity<>("Forbidden", HttpStatus.FORBIDDEN);
     }
 
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<String> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 
 
     /**

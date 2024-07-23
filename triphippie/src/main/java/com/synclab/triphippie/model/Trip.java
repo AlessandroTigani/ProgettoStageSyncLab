@@ -2,6 +2,7 @@ package com.synclab.triphippie.model;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 
@@ -10,60 +11,104 @@ public class Trip {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_profile_id", nullable = false)
+    private UserProfile userProfile;
 
     @Column(nullable = false)
-    private Integer userId;
+    private LocalDateTime startDate;
+
+    @Column(nullable = false)
+    private LocalDateTime endDate;
+
+    @ManyToOne
+    @JoinColumn(name = "preference_vehicle_name")
+    private PreferenceVehicle vehicle;
+
+    @ManyToOne
+    @JoinColumn(name = "preference_tag_name")
+    private PreferenceTag type;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "start_destination_id", referencedColumnName = "id")
+    private Destination startDestination;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "end_destination_id", referencedColumnName = "id")
+    private Destination endDestination;
 
     @Column
     private String description;
 
-    @Column(nullable = false)
-    private LocalDateTime endDateTime;
-
-    @Column
-    private String preferences;
-
-    @Column(nullable = false)
-    private LocalDateTime startDateTime;
-
-    @Column
-    private String lastLocationName;
-
-    @Column(nullable = false)
-    private String firstLocationName;
-
-    @Column
-    private double lastLocationLatitude;
-
-    @Column
-    private double firstLocationLatitude;
-
-    @Column
-    private double lastLocationLongitude;
-
-    @Column
-    private double firstLocationLongitude;
 
     // Constructor
     public Trip() {}
 
-    // Getters and Setters
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public UserProfile getUserProfile() {
+        return userProfile;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setUserProfile(UserProfile userProfile) {
+        this.userProfile = userProfile;
+    }
+
+    public LocalDateTime getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDateTime startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDateTime getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDateTime endDate) {
+        this.endDate = endDate;
+    }
+
+    public PreferenceVehicle getVehicle() {
+        return vehicle;
+    }
+
+    public void setVehicle(PreferenceVehicle vehicle) {
+        this.vehicle = vehicle;
+    }
+
+    public PreferenceTag getType() {
+        return type;
+    }
+
+    public void setType(PreferenceTag type) {
+        this.type = type;
+    }
+
+    public Destination getStartDestination() {
+        return startDestination;
+    }
+
+    public void setStartDestination(Destination startDestination) {
+        this.startDestination = startDestination;
+    }
+
+    public Destination getEndDestination() {
+        return endDestination;
+    }
+
+    public void setEndDestination(Destination endDestination) {
+        this.endDestination = endDestination;
     }
 
     public String getDescription() {
@@ -72,77 +117,5 @@ public class Trip {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public LocalDateTime getEndDateTime() {
-        return endDateTime;
-    }
-
-    public void setEndDateTime(LocalDateTime endDateTime) {
-        this.endDateTime = endDateTime;
-    }
-
-    public String getPreferences() {
-        return preferences;
-    }
-
-    public void setPreferences(String preferences) {
-        this.preferences = preferences;
-    }
-
-    public LocalDateTime getStartDateTime() {
-        return startDateTime;
-    }
-
-    public void setStartDateTime(LocalDateTime startDateTime) {
-        this.startDateTime = startDateTime;
-    }
-
-    public String getLastLocationName() {
-        return lastLocationName;
-    }
-
-    public void setLastLocationName(String lastLocationName) {
-        this.lastLocationName = lastLocationName;
-    }
-
-    public String getFirstLocationName() {
-        return firstLocationName;
-    }
-
-    public void setFirstLocationName(String firstLocationName) {
-        this.firstLocationName = firstLocationName;
-    }
-
-    public double getLastLocationLatitude() {
-        return lastLocationLatitude;
-    }
-
-    public void setLastLocationLatitude(double lastLocationLatitude) {
-        this.lastLocationLatitude = lastLocationLatitude;
-    }
-
-    public double getFirstLocationLatitude() {
-        return firstLocationLatitude;
-    }
-
-    public void setFirstLocationLatitude(double firstLocationLatitude) {
-        this.firstLocationLatitude = firstLocationLatitude;
-    }
-
-    public double getLastLocationLongitude() {
-        return lastLocationLongitude;
-    }
-
-    public void setLastLocationLongitude(double lastLocationLongitude) {
-        this.lastLocationLongitude = lastLocationLongitude;
-    }
-
-    public double getFirstLocationLongitude() {
-        return firstLocationLongitude;
-    }
-
-    public void setFirstLocationLongitude(double firstLocationLongitude) {
-        this.firstLocationLongitude = firstLocationLongitude;
     }
 }
