@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "x-stoplight": {
-    "id": "1n1xc5ey1gzyb"
+    "id": "22gzhg57j7ig3"
   },
   "info": {
     "version": "1.0",
@@ -54,6 +54,13 @@
             "schema": {
               "type": "integer"
             }
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "userId"
           }
         ],
         "responses": {
@@ -77,7 +84,7 @@
           }
         ],
         "x-stoplight": {
-          "id": "6c9t3ycjl7i01"
+          "id": "1ack315i43j4y"
         }
       },
       "post": {
@@ -113,7 +120,7 @@
           }
         ],
         "x-stoplight": {
-          "id": "ngci10z89k5hv"
+          "id": "xs4ixj1ubr10o"
         },
         "parameters": [
           {
@@ -148,7 +155,7 @@
         },
         "operationId": "get-trips-tripId",
         "x-stoplight": {
-          "id": "3p1mttu4wdzi4"
+          "id": "pg0trvkleo6ct"
         },
         "description": "Retrieve the information of the trip with the matching trip ID.",
         "requestBody": {
@@ -174,7 +181,7 @@
         },
         "operationId": "put-trips-tripId",
         "x-stoplight": {
-          "id": "84zzuq61k8ess"
+          "id": "rzts35rooiudo"
         },
         "description": "Modify the information of the trip with the matching trip ID.",
         "requestBody": {
@@ -208,7 +215,7 @@
         },
         "operationId": "delete-trips-tripId",
         "x-stoplight": {
-          "id": "lr9rgz9a1g9ea"
+          "id": "oj2mbvwg9exj9"
         },
         "description": "Delete the trip with the matching trip ID.",
         "parameters": [
@@ -246,7 +253,7 @@
         },
         "operationId": "get-trips-tripId-journeys",
         "x-stoplight": {
-          "id": "dflwevti1mtai"
+          "id": "59er1rrdktemv"
         },
         "description": "Get all the journeys planned for a specific trip.",
         "requestBody": {
@@ -290,39 +297,14 @@
         },
         "operationId": "post-trips-tripId-journeys",
         "x-stoplight": {
-          "id": "x7pjjpi0avxmo"
+          "id": "l77n5i6vqz48v"
         },
         "description": "Add a new Journey for the Trip that matches the Trip ID.",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "required": [
-                  "tripId",
-                  "destination"
-                ],
-                "properties": {
-                  "tripId": {
-                    "type": "integer",
-                    "x-stoplight": {
-                      "id": "7d0qzvpxo6ipc"
-                    },
-                    "description": "The ID of the Trip to which the new Journey will be added to."
-                  },
-                  "destination": {
-                    "type": "string",
-                    "x-stoplight": {
-                      "id": "mz23bql6r4hz1"
-                    }
-                  },
-                  "description": {
-                    "type": "string",
-                    "x-stoplight": {
-                      "id": "1mszo5yt4mmgl"
-                    }
-                  }
-                }
+                "$ref": "#/components/schemas/JourneyInDto"
               }
             }
           }
@@ -365,7 +347,7 @@
         },
         "operationId": "get-trips-tripId-journeys-journeyId",
         "x-stoplight": {
-          "id": "91kqkvlq0kovw"
+          "id": "5ajgc8j3eveys"
         },
         "description": "Get the information for a Journey that matches the Journey ID."
       },
@@ -388,14 +370,14 @@
         },
         "operationId": "put-trips-tripId-journeys-journeyId",
         "x-stoplight": {
-          "id": "x84e2sf42h9t9"
+          "id": "4htq398uq262j"
         },
         "description": "Modify the information of a Journey that matches the Journey ID.",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/JourneyInDto"
+                "$ref": "#/components/schemas/JourneyUpdate"
               }
             }
           }
@@ -422,7 +404,7 @@
         },
         "operationId": "delete-trips-tripId-journeys-journeyId",
         "x-stoplight": {
-          "id": "evmx2bi2dankr"
+          "id": "13fm8a5rfavyp"
         },
         "description": "Delete the Journey that matches the Journey ID.",
         "parameters": [
@@ -456,9 +438,96 @@
         },
         "operationId": "get-trips-completed",
         "x-stoplight": {
-          "id": "7nqk4x7hvemao"
+          "id": "iy9eh1ydpsorj"
         },
         "description": "Get all completed trips."
+      }
+    },
+    "/trips/to-complete": {
+      "get": {
+        "summary": "Get all trips to complete",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TripOutDto",
+                    "x-stoplight": {
+                      "id": "hxw8t5oqxcbwq"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-trips-to-complete",
+        "x-stoplight": {
+          "id": "oap6pgroouc6g"
+        },
+        "description": "Get all trips planned but not yet completed"
+      }
+    },
+    "/trips/vehicles": {
+      "get": {
+        "summary": "Get vehicles options",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "x-stoplight": {
+                      "id": "50pn44z7bk5uq"
+                    },
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-trips-vehicles",
+        "x-stoplight": {
+          "id": "106lkwihbl9a2"
+        },
+        "description": "Get all vehicle options for a Trip."
+      }
+    },
+    "/trips/types": {
+      "get": {
+        "summary": "Get types options",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "x-stoplight": {
+                      "id": "ht3rtwhfvztjb"
+                    },
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-trips-types",
+        "x-stoplight": {
+          "id": "73oaqipstu1l8"
+        },
+        "description": "Get all types options for a Trip."
       }
     }
   },
@@ -469,14 +538,17 @@
         "title": "TripOutDto",
         "description": "Represents the Trip Dto object in output from the endpoints.",
         "x-stoplight": {
-          "id": "6a4qnyc15ur62"
+          "id": "d6x9a4ed0b8a1"
         },
         "required": [
           "id",
           "userId",
-          "startDateTime",
-          "endDateTime",
-          "firstLocationName"
+          "startDate",
+          "endDate",
+          "vehicle",
+          "type",
+          "startDestination",
+          "endDestination"
         ],
         "properties": {
           "id": {
@@ -489,21 +561,44 @@
             },
             "description": "The user that organizes the trip."
           },
-          "startDateTime": {
+          "startDate": {
             "type": "string",
             "description": "The starting date and time of the trip.",
-            "format": "date"
+            "format": "date",
+            "x-stoplight": {
+              "id": "p8q5bgk7si5hw"
+            }
           },
-          "endDateTime": {
+          "endDate": {
             "type": "string",
             "description": "The ending date and time of the trip.",
-            "format": "date"
+            "format": "date",
+            "x-stoplight": {
+              "id": "c1znzhgqtnxwm"
+            }
           },
-          "preferences": {
-            "type": "string",
-            "description": "The organizer's preferences about the trip.",
+          "vehicle": {
+            "$ref": "#/components/schemas/TripVehicle",
             "x-stoplight": {
               "id": "xl4tffeatzaqe"
+            }
+          },
+          "type": {
+            "$ref": "#/components/schemas/TripType",
+            "x-stoplight": {
+              "id": "fbyqemfdcyxny"
+            }
+          },
+          "startDestination": {
+            "$ref": "#/components/schemas/DestinationDto",
+            "x-stoplight": {
+              "id": "dmgu634sv7ul4"
+            }
+          },
+          "endDestination": {
+            "$ref": "#/components/schemas/DestinationDto",
+            "x-stoplight": {
+              "id": "pnkwnktqfpqdw"
             }
           },
           "description": {
@@ -512,58 +607,27 @@
               "id": "clnqbhxws9kux"
             },
             "description": "A brief description of the trip."
-          },
-          "firstLocationName": {
-            "type": "string",
-            "x-stoplight": {
-              "id": "961x058ed8qcb"
-            }
-          },
-          "firstLocationLongitude": {
-            "type": "number",
-            "x-stoplight": {
-              "id": "i2j0i6970mbtk"
-            }
-          },
-          "firstLocationLatitude": {
-            "type": "number",
-            "x-stoplight": {
-              "id": "dkcraf4cpzf6w"
-            }
-          },
-          "lastLocationName": {
-            "type": "string",
-            "x-stoplight": {
-              "id": "kdtn01sdjrug8"
-            }
-          },
-          "lastLocationLongitude": {
-            "type": "number",
-            "x-stoplight": {
-              "id": "yxylfgjholzy8"
-            }
-          },
-          "lastLocationLatitude": {
-            "type": "number",
-            "x-stoplight": {
-              "id": "plox1nzskg475"
-            }
           }
         },
         "examples": [
           {
-            "id": 1,
-            "userId": "traveler456",
-            "startDateTime": "2019-08-24T08:00:00",
-            "endDateTime": "2019-08-30T20:00:00",
-            "preferences": "guided tours, vegetarian meals, historic sites",
-            "description": "Vacation trip to explore historical landmarks and enjoy local cuisine.",
-            "firstLocationName": "Rome, Italy",
-            "firstLocationLongitude": 12.4964,
-            "firstLocationLatitude": 41.9028,
-            "lastLocationName": "Paris, France",
-            "lastLocationLongitude": 2.3522,
-            "lastLocationLatitude": 48.8566
+            "id": 2,
+            "userId": "5",
+            "startDate": "2019-08-24",
+            "endDate": "2019-08-24",
+            "vehicle": "TRENO",
+            "type": "FAMIGLIE",
+            "startDestination": {
+              "name": "Roma",
+              "latitude": 41.89585,
+              "longitude": 12.482213
+            },
+            "endDestination": {
+              "name": "Roma",
+              "latitude": 41.89585,
+              "longitude": 12.482213
+            },
+            "description": "Viaggio in treno andata e ritorno"
           }
         ]
       },
@@ -572,37 +636,36 @@
         "title": "TripInDto",
         "description": "Represents the Trip Dto object in input to the endpoints.",
         "x-stoplight": {
-          "id": "97dtq5yu48g2w"
+          "id": "7bwdmrj1uxyfq"
         },
         "examples": [
           {
-            "userId": "traveler456",
-            "startDateTime": "2019-08-24T08:00:00",
-            "endDateTime": "2019-08-30T20:00:00",
-            "preferences": "guided tours, vegetarian meals, historic sites",
-            "description": "Vacation trip to explore historical landmarks and enjoy local cuisine.",
-            "firstLocationName": "Rome, Italy",
-            "firstLocationLongitude": 12.4964,
-            "firstLocationLatitude": 41.9028,
-            "lastLocationName": "Paris, France",
-            "lastLocationLongitude": 2.3522,
-            "lastLocationLatitude": 48.8566
+            "startDate": "2025-08-24T08:00:00",
+            "endDate": "2025-08-25T08:00:00",
+            "vehicle": "AUTO",
+            "type": "CULTURALE",
+            "startDestination": {
+              "latitude": 11.111111,
+              "longitude": 11.111111,
+              "name": "Roma"
+            },
+            "endDestination": {
+              "latitude": 11.111111,
+              "longitude": 11.111111,
+              "name": "Padova"
+            },
+            "description": "Viaggio per castelli a intervistare i fantasmi del luogo"
           }
         ],
         "required": [
-          "userId",
           "startDate",
           "endDate",
-          "firstLocationName"
+          "vehicle",
+          "type",
+          "startDestination",
+          "endDestination"
         ],
         "properties": {
-          "userId": {
-            "type": "string",
-            "x-stoplight": {
-              "id": "wrhejshaexe2z"
-            },
-            "description": "The user that organizes the trip."
-          },
           "startDate": {
             "type": "string",
             "description": "The starting date and time of the trip.",
@@ -619,11 +682,28 @@
               "id": "2lh2j0kx03pjd"
             }
           },
-          "preferences": {
-            "type": "string",
-            "description": "The organizer's preferences about the trip.",
+          "vehicle": {
+            "$ref": "#/components/schemas/TripVehicle",
             "x-stoplight": {
               "id": "cl814byuyz0v6"
+            }
+          },
+          "type": {
+            "$ref": "#/components/schemas/TripType",
+            "x-stoplight": {
+              "id": "vjbprax6h9to5"
+            }
+          },
+          "startDestination": {
+            "$ref": "#/components/schemas/DestinationDto",
+            "x-stoplight": {
+              "id": "4vljxqmqxhroc"
+            }
+          },
+          "endDestination": {
+            "$ref": "#/components/schemas/DestinationDto",
+            "x-stoplight": {
+              "id": "1jrfios1uvhl6"
             }
           },
           "description": {
@@ -632,58 +712,43 @@
               "id": "rq1hkbjy8fi7x"
             },
             "description": "A brief description of the trip."
-          },
-          "firstLocationName": {
-            "type": "string",
-            "x-stoplight": {
-              "id": "h2lgyj6c78gl5"
-            }
-          },
-          "firstLocationLongitude": {
-            "type": "number",
-            "x-stoplight": {
-              "id": "ez9ys5g4wiicy"
-            }
-          },
-          "firstLocationLatitude": {
-            "type": "number",
-            "x-stoplight": {
-              "id": "t25x3t65l3wa8"
-            }
-          },
-          "lastLocationName": {
-            "type": "string",
-            "x-stoplight": {
-              "id": "egsh1cghajudw"
-            }
-          },
-          "lastLocationLongitude": {
-            "type": "number",
-            "x-stoplight": {
-              "id": "ex2caz8uld8wu"
-            }
-          },
-          "lastLocationLatitude": {
-            "type": "number",
-            "x-stoplight": {
-              "id": "vt40g9b7kv4fp"
-            }
           }
         }
       },
       "JourneyInDto": {
         "title": "JourneyInDto",
         "x-stoplight": {
-          "id": "cnx4q6n7ep0l4"
+          "id": "6tcww4u1fuhpk"
         },
         "type": "object",
         "description": "Represents the Journey Dto object in input to the endpoints.",
+        "examples": [
+          {
+            "destination": "Verona",
+            "description": "Visit to the Museo Lapidario Maffeiano"
+          }
+        ],
         "required": [
+          "tripId",
+          "stepNumber",
           "destination"
         ],
         "properties": {
+          "tripId": {
+            "type": "integer",
+            "x-stoplight": {
+              "id": "wyvs5ppbyaawu"
+            }
+          },
+          "stepNumber": {
+            "type": "integer",
+            "x-stoplight": {
+              "id": "07wizy536tctg"
+            },
+            "description": "The number that defines the order of the Journey amongst the others in a Trip."
+          },
           "destination": {
-            "type": "string",
+            "$ref": "#/components/schemas/DestinationDto",
             "x-stoplight": {
               "id": "1ia07k65hyngk"
             }
@@ -694,21 +759,22 @@
               "id": "iew2lrzh8y7hm"
             }
           }
-        },
-        "examples": [
-          {
-            "destination": "Verona",
-            "description": "Visit to the Museo Lapidario Maffeiano"
-          }
-        ]
+        }
       },
       "JourneyOutDto": {
         "title": "JourneyOutDto",
         "x-stoplight": {
-          "id": "tvemkou4w8wrl"
+          "id": "yfqspsrn4vj63"
         },
         "type": "object",
         "description": "Represents the Journey Dto object in output from the endpoints.",
+        "examples": [
+          {
+            "id": 0,
+            "destination": "Verona",
+            "description": "Visit to the Museo Lapidario Maffeiano"
+          }
+        ],
         "required": [
           "id",
           "destination"
@@ -721,19 +787,109 @@
             }
           },
           "destination": {
-            "type": "string"
+            "$ref": "#/components/schemas/DestinationDto"
           },
           "description": {
             "type": "string"
           }
+        }
+      },
+      "TripVehicle": {
+        "title": "TripVehicle",
+        "x-stoplight": {
+          "id": "rwgsaj1y7z67m"
         },
+        "enum": [
+          "AUTO",
+          "AEREO",
+          "BICICLETTA",
+          "TRENO",
+          "MOTOCICLO"
+        ],
+        "description": ""
+      },
+      "TripType": {
+        "title": "TripType",
+        "x-stoplight": {
+          "id": "mjo68n81zi0n5"
+        },
+        "enum": [
+          "FAMIGLIE",
+          "CULTURALE",
+          "ESCURSIONE",
+          "RELAX",
+          "DEGUSTAZIONE"
+        ]
+      },
+      "DestinationDto": {
+        "title": "DestinationDto",
+        "x-stoplight": {
+          "id": "tgm9h4dgigrz6"
+        },
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "7u1y5e3g87ugj"
+            }
+          },
+          "latitude": {
+            "type": "number",
+            "x-stoplight": {
+              "id": "w6ms2u7g0pwyp"
+            },
+            "format": "double"
+          },
+          "longitude": {
+            "type": "number",
+            "x-stoplight": {
+              "id": "6uwybre0179c7"
+            },
+            "format": "double"
+          }
+        },
+        "description": "Represents a destination of a Trip.",
         "examples": [
           {
-            "id": 0,
-            "destination": "Verona",
-            "description": "Visit to the Museo Lapidario Maffeiano"
+            "name": "Roma",
+            "latitude": 41.89585,
+            "longitude": 12.482213
           }
         ]
+      },
+      "JourneyUpdate": {
+        "title": "JourneyUpdate",
+        "x-stoplight": {
+          "id": "fvppwpynlgolc"
+        },
+        "type": "object",
+        "required": [
+          "stepNumber",
+          "destination"
+        ],
+        "properties": {
+          "stepNumber": {
+            "type": "integer",
+            "x-stoplight": {
+              "id": "w1vrzxyq17z7m"
+            },
+            "description": "The number that defines the order of the Journey amongst the others in a Trip."
+          },
+          "destination": {
+            "$ref": "#/components/schemas/DestinationDto",
+            "x-stoplight": {
+              "id": "325y9vc8hhk2p"
+            }
+          },
+          "description": {
+            "type": "string",
+            "x-stoplight": {
+              "id": "8h24lpj8k8rqh"
+            }
+          }
+        },
+        "description": "Represents the entity in input to the endpoints in order to update a Journey."
       }
     },
     "parameters": {
