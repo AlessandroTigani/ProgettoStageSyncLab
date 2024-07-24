@@ -14,7 +14,6 @@ import com.synclab.triphippie.service.TripService;
 import com.synclab.triphippie.util.JourneyConverter;
 import com.synclab.triphippie.util.JwtUtil;
 import jakarta.validation.Valid;
-import jakarta.websocket.server.PathParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
