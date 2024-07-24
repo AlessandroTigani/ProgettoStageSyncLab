@@ -1,6 +1,5 @@
 package com.synclab.triphippie.service;
 
-import com.synclab.triphippie.exception.EntryNotFoundException;
 import com.synclab.triphippie.model.PreferenceTag;
 import com.synclab.triphippie.repository.PreferenceTagRepository;
 import org.springframework.stereotype.Service;

@@ -1,6 +1,5 @@
 package com.synclab.triphippie.service;
 
-import com.synclab.triphippie.model.PreferenceTag;
 import com.synclab.triphippie.model.PreferenceVehicle;
 import com.synclab.triphippie.repository.PreferenceVehicleRepository;
 import org.springframework.stereotype.Service;
