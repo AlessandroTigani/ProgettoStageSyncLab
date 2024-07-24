@@ -1,2 +1,2 @@
-# ProgettoStageSyncLab
- Progetto realizzato per lo stage svolto presso SyncLab
+# TripHippie - Backend
+ Progetto realizzato durante il tirocinio curricolare svolto presso SyncLab.
