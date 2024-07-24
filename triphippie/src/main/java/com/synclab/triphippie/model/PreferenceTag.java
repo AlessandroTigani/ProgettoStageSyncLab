@@ -4,12 +4,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.catalina.User;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class PreferenceTag {
 
     @Id
@@ -26,36 +32,10 @@ public class PreferenceTag {
     @ManyToMany(mappedBy = "tags")
     @JsonIgnore
     private Set<UserProfile> users = new HashSet<>();
-
-
-    public PreferenceTag() {}
+    
 
     public PreferenceTag(String name, String description) {
         this.name = name;
         this.description = description;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Set<UserProfile> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<UserProfile> users) {
-        this.users = users;
     }
 }

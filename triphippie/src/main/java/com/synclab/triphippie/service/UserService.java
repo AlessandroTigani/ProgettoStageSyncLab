@@ -49,14 +49,8 @@ public class UserService {
         userRepository.save(userProfile);
     }
 
-    public UserProfile findById(Long id) {
-        Optional<UserProfile> userFound =  this.userRepository.findById(id);
-        if (userFound.isPresent()) {
-            return userFound.get();
-        }
-        else {
-            throw new EntryNotFoundException("User not found");
-        }
+    public Optional<UserProfile> findById(Long id) {
+        return this.userRepository.findById(id);
     }
 
     public Optional<UserProfile> findByUsername(String username) {

@@ -54,11 +54,14 @@ public class TripController {
         Long userId = jwtUtil.extractId(authorizationHeader);
         tripDTO.setUserId(userId);
         Trip trip = this.tripConverter.toEntity(tripDTO);
-        UserProfile userProfile = userService.findById(trip.getUserProfile().getId());
-        if(!jwtUtil.validateToken(authorizationHeader, userProfile.getUsername())){
+        Optional<UserProfile> userProfile = userService.findById(trip.getUserProfile().getId());
+        if(userProfile.isEmpty()) {
+            throw new EntryNotFoundException("User not found");
+        }
+        if(!jwtUtil.validateToken(authorizationHeader, userProfile.get().getUsername())){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        tripService.save(trip, userProfile);
+        tripService.save(trip, userProfile.get());
         return new ResponseEntity<>("Created", HttpStatus.CREATED);
     }
 
@@ -80,7 +83,7 @@ public class TripController {
             @RequestParam(name = "endDate", required = false) LocalDateTime endDate,
             @RequestParam(name = "userId", required = false) Long userId
     ){
-        if(userId != null && userService.findById(userId) == null){
+        if(userId != null && userService.findById(userId).isEmpty()){
             throw new EntryNotFoundException("User not found");
         }
         List<Trip> trips = tripService.findByFilters(page, tripsSize, startDate, endDate, userId);

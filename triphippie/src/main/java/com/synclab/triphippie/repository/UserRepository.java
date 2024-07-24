@@ -27,13 +27,13 @@ public interface UserRepository extends JpaRepository<UserProfile, Long> {
 
     @Modifying
     @Transactional
-    @Query("DELETE FROM UserProfile u JOIN u.tags t WHERE u.id = :userId")
+    @Query(value = "DELETE FROM user_profile_preference_tag WHERE user_profile_id = :userId", nativeQuery = true)
     void deleteTagsByUserId(@Param("userId") Long userId);
 
 
     @Modifying
     @Transactional
-    @Query("DELETE FROM UserProfile u JOIN u.vehicles t WHERE u.id = :userId")
+    @Query(value = "DELETE FROM user_profile_preference_vehicle WHERE user_profile_id = :userId", nativeQuery = true)
     void deleteVehiclesByUserId(@Param("userId") Long userId);
 
 }

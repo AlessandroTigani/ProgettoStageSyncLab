@@ -96,11 +96,11 @@ public class TripService {
     }
 
     public List<Trip> findAllCompletedTrips() {
-        return tripRepository.findAllCompletedTrips(LocalDateTime.now());
+        return tripRepository.findByEndDateLessThan(LocalDateTime.now());
     }
 
     public List<Trip> findAllTripsToComplete() {
-        return tripRepository.findAllTripsToComplete(LocalDateTime.now());
+        return tripRepository.findByEndDateGreaterThan(LocalDateTime.now());
     }
 
 }

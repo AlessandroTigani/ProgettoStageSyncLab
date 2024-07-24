@@ -74,4 +74,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleExpiredJwtException(ExpiredJwtException ex, WebRequest request) {
         return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
     }
+
+
+    @ExceptionHandler(UserUnauthorizedException.class)
+    public ResponseEntity<Object> handleUserUnauthorizedException() {
+        return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+    }
 }
