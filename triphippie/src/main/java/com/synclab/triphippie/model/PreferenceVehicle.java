@@ -7,11 +7,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class PreferenceVehicle {
     @Id
     @Size(min=2, max = 20, message = "The length of the name must be between 2 and 20 characters.")
@@ -29,35 +35,11 @@ public class PreferenceVehicle {
     private Set<UserProfile> users = new HashSet<>();
 
 
-    public PreferenceVehicle() {}
-
     public PreferenceVehicle(String name, String description) {
         this.name = name;
         this.description = description;
     }
 
 
-    public String getDescription() {
-        return description;
-    }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Set<UserProfile> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<UserProfile> users) {
-        this.users = users;
-    }
 }

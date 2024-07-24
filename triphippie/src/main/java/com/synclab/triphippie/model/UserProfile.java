@@ -2,11 +2,18 @@ package com.synclab.triphippie.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserProfile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,81 +61,6 @@ public class UserProfile {
     @JsonIgnore
     private Set<PreferenceVehicle> vehicles = new HashSet<>();
 
-    public UserProfile() {}
-
-    // Getters and setters
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public Date getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(Date dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getAbout() {
-        return about;
-    }
-
-    public void setAbout(String about) {
-        this.about = about;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
 
     @Override
     public String toString() {
@@ -144,24 +76,4 @@ public class UserProfile {
                 '}';
     }
 
-    public Set<PreferenceTag> getTags() {
-        return tags;
-    }
-
-    public void setTags(Set<PreferenceTag> tags) {
-        this.tags = tags;
-    }
-
-    public void removeTag(PreferenceTag tag) {
-        this.tags.remove(tag);
-        tag.getUsers().remove(this);
-    }
-
-    public Set<PreferenceVehicle> getVehicles() {
-        return vehicles;
-    }
-
-    public void setVehicles(Set<PreferenceVehicle> vehicles) {
-        this.vehicles = vehicles;
-    }
 }

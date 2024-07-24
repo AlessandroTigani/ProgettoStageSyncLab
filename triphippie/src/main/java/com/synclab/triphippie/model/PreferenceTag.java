@@ -32,7 +32,7 @@ public class PreferenceTag {
     @ManyToMany(mappedBy = "tags")
     @JsonIgnore
     private Set<UserProfile> users = new HashSet<>();
-    
+
 
     public PreferenceTag(String name, String description) {
         this.name = name;

@@ -2,11 +2,16 @@ package com.synclab.triphippie.model;
 
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Trip {
 
     @Id
@@ -42,80 +47,4 @@ public class Trip {
     @Column
     private String description;
 
-
-    // Constructor
-    public Trip() {}
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public UserProfile getUserProfile() {
-        return userProfile;
-    }
-
-    public void setUserProfile(UserProfile userProfile) {
-        this.userProfile = userProfile;
-    }
-
-    public LocalDateTime getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(LocalDateTime startDate) {
-        this.startDate = startDate;
-    }
-
-    public LocalDateTime getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(LocalDateTime endDate) {
-        this.endDate = endDate;
-    }
-
-    public PreferenceVehicle getVehicle() {
-        return vehicle;
-    }
-
-    public void setVehicle(PreferenceVehicle vehicle) {
-        this.vehicle = vehicle;
-    }
-
-    public PreferenceTag getType() {
-        return type;
-    }
-
-    public void setType(PreferenceTag type) {
-        this.type = type;
-    }
-
-    public Destination getStartDestination() {
-        return startDestination;
-    }
-
-    public void setStartDestination(Destination startDestination) {
-        this.startDestination = startDestination;
-    }
-
-    public Destination getEndDestination() {
-        return endDestination;
-    }
-
-    public void setEndDestination(Destination endDestination) {
-        this.endDestination = endDestination;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 }
