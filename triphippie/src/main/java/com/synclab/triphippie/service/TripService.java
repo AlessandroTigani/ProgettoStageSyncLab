@@ -3,6 +3,7 @@ package com.synclab.triphippie.service;
 import com.synclab.triphippie.exception.EntryNotFoundException;
 import com.synclab.triphippie.model.*;
 import com.synclab.triphippie.repository.TripRepository;
+import com.synclab.triphippie.util.Utility;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -12,15 +13,40 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 @Service
 public class TripService {
 
     private final TripRepository tripRepository;
+    private final Utility utility;
 
-    public TripService(TripRepository tripRepository, UserService userService) {
+    public TripService(TripRepository tripRepository, Utility utility) {
         this.tripRepository = tripRepository;
+        this.utility = utility;
     }
+
+
+    /**
+     * Creates a specification for filtering Trip entities based on provided start date, end date, and user profile.
+     * @param startDate the start date to filter trips. Only trips starting on or after this date will be included.
+     * @param endDate the end date to filter trips. Only trips ending on or before this date will be included.
+     * @param userProfile the ID of the user profile to filter trips. Only trips associated with this user profile will be included.
+     * @return a Specification object that can be used to filter Trip entities based on the given criteria.
+     */
+    private Specification<Trip> withFilters(LocalDateTime startDate, LocalDateTime endDate, Long userProfile) {
+        return (root, query, criteriaBuilder) -> {
+            Predicate predicate = criteriaBuilder.conjunction();
+            if (startDate != null)
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.greaterThanOrEqualTo(root.get("startDate"), startDate));
+            if (endDate != null)
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.lessThanOrEqualTo(root.get("endDate"), endDate));
+            if (userProfile != null)
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("userProfile").get("id"), userProfile));
+            return predicate;
+        };
+    }
+
 
     public void save(Trip trip, UserProfile userProfile) {
         if(trip.getStartDate().isAfter(trip.getEndDate())){
@@ -30,9 +56,11 @@ public class TripService {
         tripRepository.save(trip);
     }
 
+
     public Optional<Trip> findById(Long id) {
         return this.tripRepository.findById(id);
     }
+
 
     public List<Trip> findByFilters(Integer page, Integer tripsSize, LocalDateTime startDate, LocalDateTime endDate, Long userId) {
         Pageable pageable = PageRequest.of(page, tripsSize);
@@ -40,49 +68,17 @@ public class TripService {
         return tripRepository.findAll(spec, pageable).getContent();
     }
 
-    public static Specification<Trip> withFilters(LocalDateTime startDate, LocalDateTime endDate, Long userProfile) {
-        return (root, query, criteriaBuilder) -> {
-            Predicate predicate = criteriaBuilder.conjunction(); // Start with an always-true predicate
-
-            if (startDate != null) {
-                predicate = criteriaBuilder.and(predicate, criteriaBuilder.greaterThanOrEqualTo(root.get("startDate"), startDate));
-            }
-            if (endDate != null) {
-                predicate = criteriaBuilder.and(predicate, criteriaBuilder.lessThanOrEqualTo(root.get("endDate"), endDate));
-            }
-            if (userProfile != null) {
-                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("userProfile").get("id"), userProfile));
-            }
-
-            return predicate;
-        };
-    }
-
-
-
     public void update(Trip trip, Long id) {
-        Optional<Trip> tripFound = this.tripRepository.findById(id);
-        if(tripFound.isEmpty()) {
-            throw new EntryNotFoundException("Trip not found");
-        }
-        else{
-            Trip temp = tripFound.get();
-            if (trip.getDescription() != null)
-                temp.setDescription(trip.getDescription());
-            if(trip.getStartDate() != null)
-                temp.setStartDate(trip.getStartDate());
-            if(trip.getEndDate() != null)
-                temp.setEndDate(trip.getEndDate());
-            if(trip.getVehicle() != null)
-                temp.setVehicle(trip.getVehicle());
-            if(trip.getType() != null)
-                temp.setType(trip.getType());
-            if(trip.getStartDestination() != null)
-                temp.setStartDestination(trip.getStartDestination());
-            if(trip.getEndDestination() != null)
-                temp.setEndDestination(trip.getEndDestination());
-            tripRepository.save(temp);
-        }
+        Trip temp = this.tripRepository.findById(id)
+                .orElseThrow(() -> new EntryNotFoundException("Trip not found"));
+        utility.updateIfNotNull(trip.getDescription(), temp::setDescription);
+        utility.updateIfNotNull(trip.getStartDate(), temp::setStartDate);
+        utility.updateIfNotNull(trip.getEndDate(), temp::setEndDate);
+        utility.updateIfNotNull(trip.getVehicle(), temp::setVehicle);
+        utility.updateIfNotNull(trip.getType(), temp::setType);
+        utility.updateIfNotNull(trip.getStartDestination(), temp::setStartDestination);
+        utility.updateIfNotNull(trip.getEndDestination(), temp::setEndDestination);
+        tripRepository.save(temp);
     }
 
     public void deleteById(Long id) {

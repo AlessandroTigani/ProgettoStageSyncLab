@@ -13,8 +13,8 @@ import com.synclab.triphippie.repository.UserRepository;
 import com.synclab.triphippie.util.HashUtil;
 import com.synclab.triphippie.util.PreferenceTagConverter;
 import com.synclab.triphippie.util.PreferenceVehicleConverter;
+import com.synclab.triphippie.util.Utility;
 import jakarta.transaction.Transactional;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -32,19 +32,30 @@ public class UserService {
     private final PreferenceTagConverter preferenceTagConverter;
     private final PreferenceVehicleConverter preferenceVehicleConverter;
     private final PreferenceVehicleRepository preferenceVehicleRepository;
+    private final Utility utility;
+    private static final String USER_NOT_FOUND = "User not found";
+    private static final String USERNAME_ALREADY_USED = "Username already in use.";
 
-    public UserService(UserRepository userRepository, PreferenceTagRepository preferenceTagRepository, PreferenceTagConverter preferenceTagConverter, PreferenceVehicleConverter preferenceVehicleConverter, PreferenceVehicleRepository preferenceVehicleRepository) {
+    public UserService(
+            UserRepository userRepository,
+            PreferenceTagRepository preferenceTagRepository,
+            PreferenceTagConverter preferenceTagConverter,
+            PreferenceVehicleConverter preferenceVehicleConverter,
+            PreferenceVehicleRepository preferenceVehicleRepository,
+            Utility utility
+    ) {
         this.userRepository = userRepository;
         this.filePath = System.getProperty("IMAGE_PATH");
         this.preferenceTagRepository = preferenceTagRepository;
         this.preferenceTagConverter = preferenceTagConverter;
         this.preferenceVehicleConverter = preferenceVehicleConverter;
         this.preferenceVehicleRepository = preferenceVehicleRepository;
+        this.utility = utility;
     }
 
     public void save(UserProfile userProfile) {
         if (this.userRepository.existsByUsername(userProfile.getUsername())) {
-            throw new UniqueFieldException("Username already exists");
+            throw new UniqueFieldException(USERNAME_ALREADY_USED);
         }
         userRepository.save(userProfile);
     }
@@ -70,38 +81,22 @@ public class UserService {
     public void update(UserProfile userProfile, Long id) {
         Optional<UserProfile> userFound = this.userRepository.findById(id);
         if(userFound.isEmpty()) {
-            throw new EntryNotFoundException("User not found");
+            throw new EntryNotFoundException(USER_NOT_FOUND);
         }
         List<UserProfile> alreadyExistingUsers = findUsersWithSameUsernameButDifferentId(userProfile.getUsername(), id);
         if(!alreadyExistingUsers.isEmpty()) {
-            throw new UniqueFieldException("Username already in use");
+            throw new UniqueFieldException(USERNAME_ALREADY_USED);
         }
         else{
             UserProfile user = userFound.get();
-            if (userProfile.getUsername() != null) {
-                user.setUsername(userProfile.getUsername());
-            }
-            if (userProfile.getPassword() != null) {
-                user.setPassword(userProfile.getPassword());
-            }
-            if (userProfile.getAbout() != null) {
-                user.setAbout(userProfile.getAbout());
-            }
-            if (userProfile.getCity() != null) {
-                user.setCity(userProfile.getCity());
-            }
-            if (userProfile.getEmail() != null) {
-                user.setEmail(userProfile.getEmail());
-            }
-            if (userProfile.getDateOfBirth() != null) {
-                user.setDateOfBirth(userProfile.getDateOfBirth());
-            }
-            if (userProfile.getFirstName() != null) {
-                user.setFirstName(userProfile.getFirstName());
-            }
-            if (userProfile.getLastName() != null) {
-                user.setLastName(userProfile.getLastName());
-            }
+            utility.updateIfNotNull(userProfile.getUsername(), user::setUsername);
+            utility.updateIfNotNull(userProfile.getPassword(), user::setPassword);
+            utility.updateIfNotNull(userProfile.getAbout(), user::setAbout);
+            utility.updateIfNotNull(userProfile.getCity(), user::setCity);
+            utility.updateIfNotNull(userProfile.getEmail(), user::setEmail);
+            utility.updateIfNotNull(userProfile.getDateOfBirth(), user::setDateOfBirth);
+            utility.updateIfNotNull(userProfile.getFirstName(), user::setFirstName);
+            utility.updateIfNotNull(userProfile.getLastName(), user::setLastName);
             userRepository.save(user);
         }
     }
@@ -112,7 +107,7 @@ public class UserService {
             userRepository.delete(userFound.get());
         }
         else{
-            throw new EntryNotFoundException("User not found");
+            throw new EntryNotFoundException(USER_NOT_FOUND);
         }
     }
 
@@ -139,7 +134,7 @@ public class UserService {
      * @param id id of the user who chose the new username
      * @return list of entity with the same username but different id
      */
-    public List<UserProfile> findUsersWithSameUsernameButDifferentId(String username, Long id) {
+    private List<UserProfile> findUsersWithSameUsernameButDifferentId(String username, Long id) {
         return userRepository.findByUsernameAndDifferentId(username, id);
     }
 
@@ -148,7 +143,8 @@ public class UserService {
         if (folder.exists() && folder.isDirectory()) {
             try {
                 deleteDirectory(folder);
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 throw new RuntimeException("Error deleting user folder");
             }
         }
@@ -180,7 +176,7 @@ public class UserService {
     public void addPreferenceTagToUserProfile(Long userProfileId, List<PreferenceTagDTO> preferenceTagDtos) {
         Optional<UserProfile> userProfileOptional = userRepository.findById(userProfileId);
         if (userProfileOptional.isEmpty()){
-            throw new EntryNotFoundException("User not found");
+            throw new EntryNotFoundException(USER_NOT_FOUND);
         }
         for (PreferenceTagDTO preferenceTagDto : preferenceTagDtos) {
             Optional<PreferenceTag> preferenceTagOptional = preferenceTagRepository.findByName(preferenceTagDto.getName());
@@ -199,7 +195,7 @@ public class UserService {
 
     public List<PreferenceTagDTO> getAllUserPreferenceTags(Long userProfileId) {
         UserProfile userProfile = userRepository.findById(userProfileId).orElseThrow(
-                () -> new EntryNotFoundException("User not found")
+                () -> new EntryNotFoundException(USER_NOT_FOUND)
         );
         List<PreferenceTagDTO> preferenceTagDTOs = new ArrayList<>();
         for (PreferenceTag preferenceTag : userProfile.getTags()) {
@@ -211,8 +207,8 @@ public class UserService {
 
 
     public void removePreferenceTagFromUser(Long userProfileId) {
-        UserProfile userProfile = userRepository.findById(userProfileId).orElseThrow(
-                () -> new EntryNotFoundException("User not found")
+        userRepository.findById(userProfileId).orElseThrow(
+                () -> new EntryNotFoundException(USER_NOT_FOUND)
         );
         userRepository.deleteTagsByUserId(userProfileId);
     }
@@ -223,7 +219,7 @@ public class UserService {
     public void addPreferenceVehiclesToUserProfile(Long userProfileId, List<PreferenceVehicleDTO> preferenceVehicleDTOs) {
         Optional<UserProfile> userProfileOptional = userRepository.findById(userProfileId);
         if (userProfileOptional.isEmpty()){
-            throw new EntryNotFoundException("User not found");
+            throw new EntryNotFoundException(USER_NOT_FOUND);
         }
         for (PreferenceVehicleDTO preferenceVehicleDTO : preferenceVehicleDTOs) {
             Optional<PreferenceVehicle> preferenceVehicleOptional = preferenceVehicleRepository.findByName(preferenceVehicleDTO.getName());
@@ -242,19 +238,19 @@ public class UserService {
 
     public List<PreferenceVehicleDTO> getAllUserPreferenceVehicles(Long userProfileId) {
         UserProfile userProfile = userRepository.findById(userProfileId).orElseThrow(
-                () -> new EntryNotFoundException("User not found")
+                () -> new EntryNotFoundException(USER_NOT_FOUND)
         );
         List<PreferenceVehicleDTO> preferenceVehicleDTOs = new ArrayList<>();
         for (PreferenceVehicle preferenceVehicle : userProfile.getVehicles()) {
-            PreferenceVehicleDTO vechicleDTO = preferenceVehicleConverter.toDto(preferenceVehicle);
-            preferenceVehicleDTOs.add(vechicleDTO);
+            PreferenceVehicleDTO vehicleDTO = preferenceVehicleConverter.toDto(preferenceVehicle);
+            preferenceVehicleDTOs.add(vehicleDTO);
         }
         return preferenceVehicleDTOs;
     }
 
     public void removePreferenceVehiclesFromUser(Long userProfileId) {
-        UserProfile userProfile = userRepository.findById(userProfileId).orElseThrow(
-                () -> new EntryNotFoundException("User not found")
+        userRepository.findById(userProfileId).orElseThrow(
+                () -> new EntryNotFoundException(USER_NOT_FOUND)
         );
         userRepository.deleteVehiclesByUserId(userProfileId);
     }
