@@ -273,6 +273,13 @@
                     "description": "The id of the Trip that contains the journeys."
                   }
                 }
+              },
+              "examples": {
+                "Example 1": {
+                  "value": {
+                    "tripId": 0
+                  }
+                }
               }
             }
           }
@@ -283,7 +290,8 @@
         "tags": [],
         "responses": {
           "201": {
-            "description": "Created"
+            "description": "Created",
+            "content": {}
           },
           "401": {
             "description": "Unauthorized"
@@ -305,6 +313,14 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/JourneyInDto"
+              },
+              "examples": {
+                "Example 1": {
+                  "value": {
+                    "destination": "Verona",
+                    "description": "Visit to the Museo Lapidario Maffeiano"
+                  }
+                }
               }
             }
           }
@@ -722,12 +738,6 @@
         },
         "type": "object",
         "description": "Represents the Journey Dto object in input to the endpoints.",
-        "examples": [
-          {
-            "destination": "Verona",
-            "description": "Visit to the Museo Lapidario Maffeiano"
-          }
-        ],
         "required": [
           "tripId",
           "stepNumber",
@@ -759,7 +769,19 @@
               "id": "iew2lrzh8y7hm"
             }
           }
-        }
+        },
+        "examples": [
+          {
+            "tripId": 0,
+            "stepNumber": 0,
+            "destination": {
+              "name": "Roma",
+              "latitude": 41.89585,
+              "longitude": 12.482213
+            },
+            "description": "string"
+          }
+        ]
       },
       "JourneyOutDto": {
         "title": "JourneyOutDto",
