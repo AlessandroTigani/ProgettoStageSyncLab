@@ -1,0 +1,88 @@
+\section{Scelte implementative}
+
+\subsection{Framework e librerie}
+Il back-end dell'applicazione è stato sviluppato utilzzando Java e Spring Boot, entrambe richieste avanzate dall'azienda ospitante.
+In particolare, si è usata la versione 3.3.1 di Spring Boot e la JDK 21 di Java. \\
+Sono stati poi utilizzati strumenti quali:
+\begin{itemize}
+    \item \textbf{Maven}: tool di gestione del progetto utilizzato per la compilazione, il testing e il packaging dell'applicazione;
+    \item \textbf{Docker}: per la containerizzazione, l'immagine Docker postgres:alpine è utilizzata per eseguire il database PostgreSQL in un contenitore.
+    \item \textbf{PostgreSQL}: il database relazionale scelto per l'archiviazione dei dati dell'applicazione;
+    \item \textbf{SonarLint}: integrato direttamente nell'IDE IntelliJ IDEA, utilizzato per l'analisi statica del codice.
+\end{itemize}
+
+\subsubsection*{Librerie base}
+Relativamente a Spring Boot sono state inserite le seguenti librerie:
+\begin{itemize}
+    \item \textbf{spring-boot-starter-actuator}: per il monitoraggio e la gestione dell'applicazione, come metriche, controlli di stato e informazioni sugli endpoint;
+    \item \textbf{spring-boot-starter-data-jdbc}: supporto per l'accesso ai dati utilizzando JDBC;
+    \item \textbf{spring-boot-starter-data-jpa}: integrazione con JPA (Java Persistence API) per l'accesso ai dati in modo ORM (Object-Relational Mapping);
+    \item \textbf{spring-boot-starter-validation}: validazione dei dati delle richieste utilizzando le annotazioni di Java Bean Validation;
+    \item \textbf{spring-boot-starter-web}: dipendenze necessarie per costruire applicazioni web RESTful.
+\end{itemize}
+
+\subsubsection*{Librerie di utilità}
+\begin{itemize}
+    \item \textbf{io.jsonwebtoken}: insieme alle relative dipendenze è utilizzata per la gestione dei JSON Web Tokens (JWT), che sono utilizzati per l'autenticazione e l'autorizzazione;
+    \item \textbf{io.github.cdimascio}: permette di caricare variabili d'ambiente da un file .env, semplificando la configurazione dell'applicazione;
+    \item \textbf{org.projectlombok}: utilizzato per ridurre il boilerplate del codice Java attraverso l'uso di annotazioni, in particolare evita la scrittura manuale di getter, setter e costruttori.
+\end{itemize}
+
+\subsubsection*{Strumenti di svilupppo}
+\begin{itemize}
+    \item \textbf{spring-boot-devtools}: fornisce funzionalità di sviluppo come il live reload;
+    \item \textbf{spring-boot-starter-test}: include librerie di testing come JUnit, Mockito e AssertJ per supportare lo sviluppo di test unitari e di integrazione.
+\end{itemize}
+
+
+\subsection{Gestione della persistenza}
+Per la gestione della persistenza si è utilizzato JPA e la sua implementazione Hibernate.
+Questo ha permesso di lavorare con oggetti Java (entità) che vengono poi mappati alle tabelle del database PostgreSQL.\\
+
+\noindent
+La configurazione delle proprietà del database avviene nel file \texttt{application.properties}.\\
+\begin{lstlisting}
+    # Configurazione di esempio del datasource
+    spring.datasource.url=jdbc:postgresql://localhost:5432/triphippie
+    spring.datasource.username=USERNAME
+    spring.datasource.password=PASSWORD
+    spring.datasource.driver-class-name=org.postgresql.Driver
+
+    # Configurazione JPA/Hibernate
+    spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+    spring.jpa.hibernate.ddl-auto=update
+    spring.jpa.show-sql=true
+\end{lstlisting}
+Per quanto riguarda la configurazione di JPA si usano le proprietà:
+\begin{itemize}
+    \item \textbf{spring.jpa.database-platform}: specifica il dialect di Hibernate da usare per il database PostgreSQL;
+    \item \textbf{spring.jpa.hibernate.ddl-auto}: controlla il comportamento di Hibernate per la gestione dello schema del database. 
+    L'opzione update aggiorna lo schema del database all'avvio dell'applicazione per riflettere i cambiamenti nelle entità JPA. 
+    Altre opzioni possibili includono none, validate, create, create-drop;
+    \item \textbf{spring.jpa.show-sql}: abilita la stampa delle istruzioni SQL generate da Hibernate nella console, utile per scopi di debug.
+\end{itemize}
+
+\noindent
+Le entità che definiscono le tabelle del database vengono definite nell'apposito package \texttt{model}, si utilizzano le annotazioni di Lombok per velocizzare la scrittura di getter, setter e costruttori. 
+Le relazioni tra le entità sono realizzate tramite annotazioni, allo stato attuale le relazioni presenti sono:
+\begin{itemize}
+    \item \textbf{UserProfile - PreferenceTag}: relazione ManyToMany per la realizzazione della profilazione delle preferenze utente in merito alla tipologia di vacanza;
+    \item \textbf{UserProfile - PreferenceVehicle}: relazione ManyToMany per la realizzazione della profilazione delle preferenze utente in merito al mezzo di trasporto preferito;
+    \item \textbf{Trip - UserProfile}: relazione ManyToOne che definisce l'utente creatore del viaggio; 
+    \item \textbf{Trip - PreferenceTag}: relazione ManyToOne che definisce il tag da associare al viaggio;
+    \item \textbf{Trip - PreferenceVehicle}: relazione ManyToOne che definisce il veicolo utilizzato per il viaggio;
+    \item \textbf{Trip - Destination}: relazione OneToOne che definisce il punto di arrivo o di partenza di un viaggio;
+    \item \textbf{Journey - Trip}: relazione ManyToOne che associa la tappa ad un viaggio;
+    \item \textbf{Journey - Destination}: relazione OneToOne che associa la tappa ad una località.
+\end{itemize}
+
+\noindent
+Il repository è un'interfaccia che estende JpaRepository e JpaSpecificationExecutor, fornendo metodi CRUD e capacità di query avanzate.
+Vengono definiti all'interno del package \texttt{repository}.
+Ho cercato di limitare il più possibile l'utilizzo di query scritte manualmente, sfruttando il framework a disposizione.
+
+
+\subsection{Gestione della sicurezza}
+Vista la necessità di mantenere bassa la complessità dell'applicazione, l'azienda ospitante ha richiesto che non venisse implementato il modulo Spring Security.\\
+Le operazioni di autorizzazione ed autenticazione vengono implementate manualmente all'interno della classe JwtUtil, che tramite \texttt{jsonwebtoken} si occupa della generazione e validazione dei token JWT.\\
+In base alla tipologia di operazione richiesta il token viene validato considerando solo la sua data di scadenza, oppure assicurandosi che il token corrisponda all'identificativo dell'utente su cui si vogliono apportare modifiche.

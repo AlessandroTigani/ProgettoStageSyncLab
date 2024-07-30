@@ -3,7 +3,7 @@ package com.synclab.triphippie.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public class TokenDTORequest {
+public class TokenDTO {
 
     @NotBlank(message = "Username is required")
     @Size(max = 50, message = "Username must be at most 50 characters")

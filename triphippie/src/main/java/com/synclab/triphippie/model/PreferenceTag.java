@@ -4,19 +4,22 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.catalina.User;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class PreferenceTag {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
 
+    @Id
     @Size(min=2, max = 20, message = "The length of the name must be between 2 and 20 characters.")
-    @Column(length = 20, nullable = false)
     @NotNull(message = "Name is required.")
     private String name;
 
@@ -25,41 +28,14 @@ public class PreferenceTag {
     @Column(length = 255, nullable = true)
     private String description;
 
+
     @ManyToMany(mappedBy = "tags")
     @JsonIgnore
     private Set<UserProfile> users = new HashSet<>();
 
-    public PreferenceTag() {}
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
+    public PreferenceTag(String name, String description) {
         this.name = name;
-    }
-
-    public Set<UserProfile> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<UserProfile> users) {
-        this.users = users;
+        this.description = description;
     }
 }

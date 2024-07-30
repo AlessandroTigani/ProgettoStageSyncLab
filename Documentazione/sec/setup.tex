@@ -1,0 +1,25 @@
+\section{Setup dell'ambiente di sviluppo}
+\subsection{Prerequisiti}
+Per lo sviluppo del back-end è stata utilizzata la \href{https://www.oracle.com/it/java/technologies/downloads/}{JDK 21} di Java, con framework Spring Boot nella versione 3.3.2, mentre per la gestione di progetto è stato utilizzato \href{https://maven.apache.org/}{Maven}.\\
+Per la creazione del database viene utilizzato \href{https://www.docker.com/}{Docker} con immagine postgres:alpine. \\
+L'IDE utilizzato per lo sviluppo è IntelliJ IDEA, si consiglia inoltre l'utilizzo di \href{https://www.pgadmin.org/}{pgAdmin} per l'interazione diretta con il database.
+
+\subsection{Configurazione del Progetto}
+Una volta soddisfatti i prerequisiti, è possibile effettuare la clonazione da GitHub del \href{https://github.com/AlessandroTigani/ProgettoStageSyncLab}{Progetto}.\\
+Per avviare il progetto è necessario prima creare il container relativo al solo database di sviluppo, è possibile farlo eseguendo il file \texttt{compose-dev.yml} presente nella cartella \texttt{triphippie/src/main/resources} del repository.
+Tale file preleva i dati di configurazione relativi al database dal file \texttt{.env} presente nella stessa cartella.
+Al suo interno sono presenti le informazioni in merito al database, alla chiave per la generazione dei token JWT ed il path relativo alla cartella che dovrà contenere le immagini degli utenti. 
+Un esempio di compilazione del file è il seguente:
+\begin{lstlisting}
+    POSTGRES_USER=postgres
+    POSTGRES_PASSWORD=postgres
+    POSTGRES_DB=triphippie
+    JWT_SECRET_KEY=xVQ9J3BcTTJIQqA3r8xdlJEe6jrTlyWtzJZt5cZtnl0=
+    IMAGE_PATH=C:/Dev/ProgettoStageSyncLab/triphippie/resources
+\end{lstlisting}
+Eventuali modifiche apportate al file \texttt{.env} dovranno essere riflesse anche nel file \\
+\texttt{application.properties} presente nella stessa directory.\\
+Si può infine procedere ad installare le dipendenze con il comando:
+\begin{lstlisting}
+    mvn clean install
+\end{lstlisting}

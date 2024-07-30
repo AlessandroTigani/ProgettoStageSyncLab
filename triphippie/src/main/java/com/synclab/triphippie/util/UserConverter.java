@@ -8,9 +8,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserConverter {
 
-    /**
-     * Convert the received DTO to a UserProfile entity.
-     */
     public UserProfile toEntity(UserDTORequest dto) {
         if (dto == null) {
             return null;
@@ -28,9 +25,7 @@ public class UserConverter {
         return userProfile;
     }
 
-    /**
-     * Convert a UserProfile to a DTO suited to be a response object.
-     */
+
     public UserDTOResponse toDto(UserProfile userProfile) {
         if (userProfile == null) {
             return null;

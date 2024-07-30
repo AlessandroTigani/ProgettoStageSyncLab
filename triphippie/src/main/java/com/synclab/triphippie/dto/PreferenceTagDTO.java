@@ -1,12 +1,10 @@
 package com.synclab.triphippie.dto;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public class PreferenceTagDTO {
-    private Integer id;
 
     @NotNull(message = "Name cannot be null")
     @NotBlank(message = "Name is required")
@@ -16,6 +14,17 @@ public class PreferenceTagDTO {
 
     @Size(max = 255, message = "The length of the description must be less than 255 characters.")
     private String description;
+
+    public PreferenceTagDTO(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
+
+    public PreferenceTagDTO(String name){
+        this.name = name;
+    }
+
+    public PreferenceTagDTO() {}
 
     public String getName() {
         return name;
@@ -33,11 +42,4 @@ public class PreferenceTagDTO {
         this.description = description;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 }

@@ -1,38 +1,42 @@
 package com.synclab.triphippie.util;
 
 import com.synclab.triphippie.dto.PreferenceTagDTO;
-import com.synclab.triphippie.dto.UserDTORequest;
-import com.synclab.triphippie.dto.UserDTOResponse;
+import com.synclab.triphippie.exception.EntryNotFoundException;
 import com.synclab.triphippie.model.PreferenceTag;
-import com.synclab.triphippie.model.UserProfile;
+import com.synclab.triphippie.repository.PreferenceTagRepository;
+import com.synclab.triphippie.service.PreferenceTagService;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class PreferenceTagConverter {
 
-    /**
-     * Convert the received DTO to a PreferenceTag entity.
-     */
+    PreferenceTagRepository preferenceTagRepository;
+
+    public PreferenceTagConverter(PreferenceTagRepository preferenceTagRepository) {
+        this.preferenceTagRepository = preferenceTagRepository;
+    }
+
     public PreferenceTag toEntity(PreferenceTagDTO dto) {
         if (dto == null) {
             return null;
         }
-        PreferenceTag entity = new PreferenceTag();
-        entity.setName(dto.getName());
-        entity.setDescription(dto.getDescription());
-        return entity;
+        Optional<PreferenceTag> optionalPreferenceTag = preferenceTagRepository.findByName(dto.getName());
+        if (optionalPreferenceTag.isPresent()) {
+            return optionalPreferenceTag.get();
+        }
+        else {
+            throw new EntryNotFoundException("Preference not found");
+        }
     }
 
 
-    /**
-     * Convert a UserProfile to a DTO suited to be a response object.
-     */
     public PreferenceTagDTO toDto(PreferenceTag entity) {
         if (entity == null) {
             return null;
         }
         PreferenceTagDTO dto = new PreferenceTagDTO();
-        dto.setId(entity.getId());
         dto.setName(entity.getName());
         dto.setDescription(entity.getDescription());
         return dto;

@@ -1,9 +1,8 @@
 package com.synclab.triphippie.controller;
 
-import com.synclab.triphippie.dto.PreferenceTagDTO;
-import com.synclab.triphippie.dto.TokenDTORequest;
-import com.synclab.triphippie.dto.UserDTORequest;
-import com.synclab.triphippie.dto.UserDTOResponse;
+import com.synclab.triphippie.dto.*;
+import com.synclab.triphippie.exception.EntryNotFoundException;
+import com.synclab.triphippie.exception.UserUnauthorizedException;
 import com.synclab.triphippie.model.UserProfile;
 import com.synclab.triphippie.service.UserService;
 import com.synclab.triphippie.util.JwtUtil;
@@ -11,6 +10,8 @@ import com.synclab.triphippie.util.UserConverter;
 import org.springframework.core.io.Resource;
 import jakarta.validation.Valid;
 import org.springframework.core.io.UrlResource;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,74 +47,79 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<String> create(@Valid @RequestBody UserDTORequest userDTORequest) {
+    public ResponseEntity<UserDTOResponse> create(@Valid @RequestBody UserDTORequest userDTORequest) {
         UserProfile userProfile = this.userConverter.toEntity(userDTORequest);
         userProfile.setPassword(userService.hashPassword(userProfile.getPassword()));
         userService.save(userProfile);
-        return new ResponseEntity<>("Created", HttpStatus.CREATED);
+        UserDTOResponse userDTOResponse = this.userConverter.toDto(userProfile);
+        //return new ResponseEntity<>("Created", HttpStatus.CREATED);
+        return new ResponseEntity<>(userDTOResponse, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTOResponse> getById(@PathVariable("id") int id) {
-        UserProfile userProfile = userService.findById(id);
-        UserDTOResponse userProfileDTO = userConverter.toDto(userProfile);
+    public ResponseEntity<UserDTOResponse> getById(@PathVariable("id") Long id) {
+        Optional<UserProfile> userProfileFound = userService.findById(id);
+        if(userProfileFound.isEmpty()) {
+            throw new EntryNotFoundException("User not found.");
+        }
+        UserDTOResponse userProfileDTO = userConverter.toDto(userProfileFound.get());
         return ResponseEntity.ok(userProfileDTO);
     }
 
-    /*
+
     @GetMapping
-    public ResponseEntity<UserProfile> getAllWithFilters(
-        @RequestParam(value = "username", required = false) String username,
-        @RequestParam(value = "usersSize", required = true) Integer usersSize,
-        @RequestParam(value = "page", required = true) Integer page
-    ) {
-        return ResponseEntity.status(HttpStatus.FOUND).build();
+    public ResponseEntity<List<UserDTOResponse>> getUsersWithFilters(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "userSize", defaultValue = "10") int size,
+            @RequestParam(name = "username", required = false) String username) {
+        Pageable pageable = PageRequest.of(page, size);
+        List<UserProfile> userProfiles = userService.getUsers(username, pageable);
+        List<UserDTOResponse> userDTOResponses = new ArrayList<>();
+        for(UserProfile userProfile : userProfiles) {
+            userDTOResponses.add(userConverter.toDto(userProfile));
+        }
+        return new ResponseEntity<>(userDTOResponses, HttpStatus.OK);
     }
-    */
+
 
     @PostMapping("/login")
-    public ResponseEntity<String> createAuthenticationToken(@RequestBody TokenDTORequest tokenDTORequest) {
-        Optional<UserProfile> user = userService.findByUsername(tokenDTORequest.getUsername());
+    public ResponseEntity<String> createAuthenticationToken(@RequestBody TokenDTO tokenDTO) {
+        Optional<UserProfile> user = userService.findByUsername(tokenDTO.getUsername());
         if (
             user.isEmpty() ||
-            !userService.verifyPassword(tokenDTORequest.getPassword(), user.get().getPassword())
+            !userService.verifyPassword(tokenDTO.getPassword(), user.get().getPassword())
         ) {
             return new ResponseEntity<>("Authentication failure", HttpStatus.BAD_REQUEST);
         }
         else {
-            String token = jwtUtil.generateToken(tokenDTORequest.getUsername());
+            String token = jwtUtil.generateToken(tokenDTO.getUsername(), user.get().getId());
             return new ResponseEntity<>(token, HttpStatus.OK);
         }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(
-            @PathVariable("id") int id,
+            @PathVariable("id") Long userId,
             @RequestBody UserDTORequest userDTORequest,
             @RequestHeader(value = "Authorization", required = true) String authorizationHeader
     ) {
-        UserProfile userProfileFound = userService.findById(id);
-        if(!jwtUtil.validateToken(authorizationHeader, userProfileFound.getUsername())){
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
+        validateByParameters(userId, authorizationHeader);
         UserProfile userProfileToUpdate = userConverter.toEntity(userDTORequest);
         if(userDTORequest.getPassword() != null)
             userProfileToUpdate.setPassword(userService.hashPassword(userDTORequest.getPassword()));
-        userService.update(userProfileToUpdate, id);
+        userService.update(userProfileToUpdate, userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+
     @DeleteMapping("{id}")
     public ResponseEntity<Void> delete(
-            @PathVariable("id") int id,
+            @PathVariable("id") Long userId,
             @RequestHeader(value = "Authorization", required = true) String authorizationHeader
     ) {
-        UserProfile userProfileFound = userService.findById(id);
-        if(!jwtUtil.validateToken(authorizationHeader, userProfileFound.getUsername())){
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        this.userService.deleteById(id);
-        this.userService.deleteUserFolder(id);
+        validateByParameters(userId, authorizationHeader);
+        this.userService.deleteById(userId);
+        this.userService.deleteUserFolder(userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -120,17 +127,14 @@ public class UserController {
     @PostMapping("/{id}/profileImage")
     public ResponseEntity<String> createProfileImage(
             @RequestParam("file") MultipartFile file,
-            @PathVariable("id") int id,
+            @PathVariable("id") Long userId,
             @RequestHeader(value = "Authorization", required = true) String authorizationHeader
     ) throws IOException {
         if (file.isEmpty()) {
             return new ResponseEntity<>("No file received", HttpStatus.BAD_REQUEST);
         }
-        UserProfile userProfileFound = userService.findById(id);
-        if(!jwtUtil.validateToken(authorizationHeader, userProfileFound.getUsername())){
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        File destFile = new File(this.filePath + "/" + id + "/profileImage.png");
+        validateByParameters(userId, authorizationHeader);
+        File destFile = new File(this.filePath + "/" + userId + "/profileImage.png");
         if (!destFile.exists()) {
             destFile.mkdirs();
         }
@@ -140,10 +144,9 @@ public class UserController {
 
 
     @GetMapping("/{id}/profileImage")
-    public ResponseEntity<Resource> getProfileImage(@PathVariable("id") int id) throws IOException {
-        UserProfile userProfileFound = userService.findById(id);
-        Path path = Paths.get(this.filePath + "/" + id + "/profileImage.png");
-        // Load the resource
+    public ResponseEntity<Resource> getProfileImage(@PathVariable("id") Long userId) throws IOException {
+        validateByParameters(userId);
+        Path path = Paths.get(this.filePath + "/" + userId + "/profileImage.png");
         Resource resource = new UrlResource(path.toUri());
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_PNG)
@@ -153,14 +156,11 @@ public class UserController {
 
     @DeleteMapping("/{id}/profileImage")
     public ResponseEntity<String> deleteProfileImage(
-            @PathVariable("id") int id,
+            @PathVariable("id") Long userId,
             @RequestHeader(value = "Authorization", required = true) String authorizationHeader
     ) throws IOException {
-        UserProfile userProfileFound = userService.findById(id);
-        if(!jwtUtil.validateToken(authorizationHeader, userProfileFound.getUsername())){
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        File destFile = new File(this.filePath + "/" + id + "/profileImage.png");
+        validateByParameters(userId, authorizationHeader);
+        File destFile = new File(this.filePath + "/" + userId + "/profileImage.png");
         if (destFile.exists()) {
             destFile.delete();
         }
@@ -171,49 +171,88 @@ public class UserController {
     }
 
 
-    @PostMapping("/tags/{userProfileId}")
-    public ResponseEntity<String> addTagToUserProfile(
-            @PathVariable int userProfileId,
+    @PostMapping("/preference-tags/{userId}")
+    public ResponseEntity<String> addTagsToUserProfile(
+            @PathVariable Long userId,
             @RequestHeader(value = "Authorization", required = true) String authorizationHeader,
             @Valid @RequestBody List<PreferenceTagDTO> preferenceTagDTOs
     ) {
-        UserProfile userProfileFound = userService.findById(userProfileId);
-        if(!jwtUtil.validateToken(authorizationHeader, userProfileFound.getUsername())){
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        userService.addPreferenceTagToUserProfile(userProfileId, preferenceTagDTOs);
+        validateByParameters(userId, authorizationHeader);
+        userService.addPreferenceTagToUserProfile(userId, preferenceTagDTOs);
         return new ResponseEntity<>("Created", HttpStatus.CREATED);
     }
 
 
-    @GetMapping("/tags/{userId}")
+    @GetMapping("/preference-tags/{userId}")
     public ResponseEntity<Object> getAllUserPreferenceTagsByUserId(
-            @PathVariable("userId") int userId,
+            @PathVariable("userId") Long userId,
             @RequestHeader(value = "Authorization", required = true) String authorizationHeader
     ){
-        UserProfile userProfileFound = userService.findById(userId);
-        if(!jwtUtil.validateToken(authorizationHeader, userProfileFound.getUsername())){
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
+        validateByParameters(userId, authorizationHeader);
         List<PreferenceTagDTO> preferenceTagDTOs = userService.getAllUserPreferenceTags(userId);
         return new ResponseEntity<>(preferenceTagDTOs, HttpStatus.FOUND);
     }
 
 
-    @DeleteMapping("/tags/{userId}/{preferenceId}")
+    @DeleteMapping("/preference-tags/{userId}")
     public ResponseEntity<String> deletePreferenceTagFromUserProfile(
-            @PathVariable("userId") int userId,
-            @PathVariable("preferenceId") int preferenceId,
+            @PathVariable("userId") Long userId,
             @RequestHeader(value = "Authorization", required = true) String authorizationHeader
     ){
-        UserProfile userProfileFound = userService.findById(userId);
-        if(!jwtUtil.validateToken(authorizationHeader, userProfileFound.getUsername())){
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        userService.removePreferenceByIdFromUser(userId, preferenceId);
+        validateByParameters(userId, authorizationHeader);
+        userService.removePreferenceTagFromUser(userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 
 
+    @PostMapping("/preference-vehicles/{userId}")
+    public ResponseEntity<String> addVehiclesToUserProfile(
+            @PathVariable Long userId,
+            @RequestHeader(value = "Authorization", required = true) String authorizationHeader,
+            @Valid @RequestBody List<PreferenceVehicleDTO> preferenceVehicleDTOs
+    ) {
+        validateByParameters(userId, authorizationHeader);
+        userService.addPreferenceVehiclesToUserProfile(userId, preferenceVehicleDTOs);
+        return new ResponseEntity<>("Created", HttpStatus.CREATED);
+    }
+
+    @GetMapping("/preference-vehicles/{userId}")
+    public ResponseEntity<Object> getAllUserPreferenceVehiclesByUserId(
+            @PathVariable("userId") Long userId,
+            @RequestHeader(value = "Authorization", required = true) String authorizationHeader
+    ){
+        validateByParameters(userId, authorizationHeader);
+        List<PreferenceVehicleDTO> preferenceVehicleDTOs = userService.getAllUserPreferenceVehicles(userId);
+        return new ResponseEntity<>(preferenceVehicleDTOs, HttpStatus.FOUND);
+    }
+
+
+    @DeleteMapping("/preference-vehicles/{userId}")
+    public ResponseEntity<String> deletePreferenceVehiclesFromUserProfile(
+            @PathVariable("userId") Long userId,
+            @RequestHeader(value = "Authorization", required = true) String authorizationHeader
+    ){
+        validateByParameters(userId, authorizationHeader);
+        userService.removePreferenceVehiclesFromUser(userId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+
+    private void validateByParameters(Long userId, String authorizationHeader){
+        Optional<UserProfile> userProfileFound = userService.findById(userId);
+        if(userProfileFound.isEmpty()) {
+            throw new EntryNotFoundException("User not found.");
+        }
+        if(!jwtUtil.validateToken(authorizationHeader, userProfileFound.get().getUsername())){
+            throw new UserUnauthorizedException("Unauthorized");
+        }
+    }
+
+    private void validateByParameters(Long userId){
+        Optional<UserProfile> userProfileFound = userService.findById(userId);
+        if(userProfileFound.isEmpty()) {
+            throw new EntryNotFoundException("User not found.");
+        }
+    }
 }

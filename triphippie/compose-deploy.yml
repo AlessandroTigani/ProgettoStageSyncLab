@@ -1,0 +1,41 @@
+version: '3.9'
+
+networks:
+  triphippie:
+    driver: bridge
+
+services:
+  db:
+    image: postgres:alpine
+    restart: always
+    environment:
+      POSTGRES_USER:  postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: triphippie
+    networks:
+      - triphippie
+    ports:
+      - 5433:5433
+    volumes:
+      - db:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+    depends_on:
+      - db
+    networks:
+      - triphippie
+    ports:
+      - "8765:8765"
+
+volumes:
+  db:
+    driver: local
+
+
