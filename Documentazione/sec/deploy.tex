@@ -1,7 +1,10 @@
 \section{Deploy dell'applicazione}
-Per effettuare la compilazione sarà sufficiente spostarsi nella cartella del progetto ed utilizzare il comando:
+Se si sono effettuate modifiche al codice dell'applicazione sarà necessario effettuare nuovamente la compilazione, a tal proposito sarà sufficiente spostarsi nella cartella del progetto ed utilizzare il comando:
+
 \begin{lstlisting}
     mvn clean package
 \end{lstlisting}
-Tale comando eseguirà anche i test presenti all'interno del progetto.
-A questo punto nella cartella \texttt{target} sarà presente un file con estensione \texttt{.jar}.
+
+\noindent
+La compilazione eseguirà anche i test definiti all'interno del codice e provvederà a generare, nella cartella \texttt{target}, un file eseguibile con estensione \texttt{.jar}. 
+Sarà sufficiente modificare in modo opportuno il file \texttt{.env} presente nella root del progetto ed eseguire il file \texttt{compose-deploy.yaml} per effettuare la creazione dei container relativi al back-end e al nuovo database.

@@ -1,4 +1,3 @@
-\newpage
 \section{Architettura del sistema}
 
 \subsection{Struttura del progetto}
@@ -47,15 +46,16 @@ Nella cartella \texttt{main} sono presenti le sotto-cartelle:
         }
     \end{minipage}
 \end{figure}
-
 \noindent
 Nella cartella \texttt{java} sono presenti i package in cui è stato suddiviso il progetto.
 Il pacchetto principale è \texttt{com.synclab.triphippie}, al suo interno sono presenti ulteriori pacchetti che racchiudono le diverse tipologie di classi create.
+
 \begin{figure}[h]
     \centering
     \begin{minipage}{7cm}
         \dirtree{%
         .1 com.synclab.triphippie.
+        .2 config.
         .2 controller.
         .2 dto.
         .2 exception.
@@ -70,8 +70,10 @@ Il pacchetto principale è \texttt{com.synclab.triphippie}, al suo interno sono 
 \noindent
 I pacchetti suddividono il progetto individuandone le componenti proncipali, ossia controller, servizi, DTO (Data Transfer Object), repository.\\
 Il modello viene usato per definire la struttura del database SQL, dunque non si ha un file \texttt{schema.sql}.\\
+\noindent
 Ulteriori pacchetti sono:
 \begin{itemize}
     \item \texttt{exception}: definisce eccezioni personalizzate ed un \texttt{GlobalExceptionHandler};
-    \item \texttt{util}: definisce i mapper per i DTO, le classi per la gestione dell'hashing delle password e per la generazione dei token JWT.
+    \item \texttt{util}: definisce i mapper per i DTO, le classi per la gestione dell'hashing delle password e per la generazione dei token JWT;
+    \item \texttt{config}: contiene classi di configurazione, in particolare quella dedicata alla gestione del Cors Mapping.
 \end{itemize}
