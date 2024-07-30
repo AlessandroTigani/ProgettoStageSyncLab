@@ -1,0 +1,77 @@
+\newpage
+\section{Architettura del sistema}
+
+\subsection{Struttura del progetto}
+Il codice del progetto è disponibile all'interno della cartella \texttt{triphippie}, al suo interno vi sono tre sotto-cartelle principali:
+\begin{itemize}
+    \item \textbf{src}: contenente il codice Java;
+    \item \textbf{target}: contenente i file di compilazione e l'eseguibile;
+    \item \textbf{resources}: contenente le immagini relative al profilo di ogni utente.
+\end{itemize}
+La cartella \texttt{resources} contiene al suo interno una sotto-cartella per ogni utente registrato, al suo interno saranno inserite tutte le risorse relative a tale utente.\\
+La cartella \texttt{src} contiene sia il codice dell'applicazione che quello relativo ai test.
+
+\begin{figure}[h]
+    \centering
+    \begin{minipage}{7cm}
+        \dirtree{%
+        .1 triphippie.
+        .2 resources.
+        .3 user\_id.
+        .3 \dots.
+        .2 src.
+        .3 main.
+        .3 test.
+        .2 target.
+        }
+    \end{minipage}
+\end{figure}
+
+\noindent
+Nella cartella \texttt{main} sono presenti le sotto-cartelle:
+\begin{itemize}
+    \item \textbf{java}: contenente i pacchetti in cui è stata suddivisa l'applicazione;
+    \item \textbf{resources}: contiene i file di configurazione come \texttt{.env}, \texttt{application.properties} ed il file \texttt{compose-dev.yaml} per la creazione del database di sviluppo.
+\end{itemize} 
+\begin{figure}[h]
+    \centering
+    \begin{minipage}{7cm}
+        \dirtree{%
+        .1 main.
+        .2 java.
+        .3 com.synclab.triphippie.
+        .2 resources.
+        .3 \textit{.env}.
+        .3 \textit{application.properties}.
+        .3 \textit{compose-dev.yaml}.
+        }
+    \end{minipage}
+\end{figure}
+
+\noindent
+Nella cartella \texttt{java} sono presenti i package in cui è stato suddiviso il progetto.
+Il pacchetto principale è \texttt{com.synclab.triphippie}, al suo interno sono presenti ulteriori pacchetti che racchiudono le diverse tipologie di classi create.
+\begin{figure}[h]
+    \centering
+    \begin{minipage}{7cm}
+        \dirtree{%
+        .1 com.synclab.triphippie.
+        .2 controller.
+        .2 dto.
+        .2 exception.
+        .2 model.
+        .2 repository.
+        .2 service.
+        .2 util.
+        } 
+    \end{minipage}
+\end{figure}
+
+\noindent
+I pacchetti suddividono il progetto individuandone le componenti proncipali, ossia controller, servizi, DTO (Data Transfer Object), repository.\\
+Il modello viene usato per definire la struttura del database SQL, dunque non si ha un file \texttt{schema.sql}.\\
+Ulteriori pacchetti sono:
+\begin{itemize}
+    \item \texttt{exception}: definisce eccezioni personalizzate ed un \texttt{GlobalExceptionHandler};
+    \item \texttt{util}: definisce i mapper per i DTO, le classi per la gestione dell'hashing delle password e per la generazione dei token JWT.
+\end{itemize}

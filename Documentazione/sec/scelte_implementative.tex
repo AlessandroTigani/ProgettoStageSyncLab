@@ -1,0 +1,52 @@
+\newpage
+\section{Scelte implementative}
+
+\subsection{Framework e librerie}
+Il back-end dell'applicazione è stato sviluppato utilzzando Java e Spring Boot, entrambe richieste avanzate dall'azienda ospitante.
+In particolare, si è usata la versione 3.3.1 di Spring Boot e la JDK 21 di Java. \\
+Sono stati poi utilizzati strumenti quali:
+\begin{itemize}
+    \item \textbf{Maven}: tool di gestione del progetto utilizzato per la compilazione, il testing e il packaging dell'applicazione;
+    \item \textbf{Docker}: per la containerizzazione, l'immagine Docker postgres:alpine è utilizzata per eseguire il database PostgreSQL in un contenitore.
+    \item \textbf{PostgreSQL}: il database relazionale scelto per l'archiviazione dei dati dell'applicazione.
+\end{itemize}
+
+\subsubsection*{Librerie base}
+Relativamente a Spring Boot sono state inserite le seguenti librerie:
+\begin{itemize}
+    \item \textbf{spring-boot-starter-actuator}: per il monitoraggio e la gestione dell'applicazione, come metriche, controlli di stato e informazioni sugli endpoint;
+    \item \textbf{spring-boot-starter-data-jdbc}: supporto per l'accesso ai dati utilizzando JDBC;
+    \item \textbf{spring-boot-starter-data-jpa}: integrazione con JPA (Java Persistence API) per l'accesso ai dati in modo ORM (Object-Relational Mapping);
+    \item \textbf{spring-boot-starter-validation}: validazione dei dati delle richieste utilizzando le annotazioni di Java Bean Validation;
+    \item \textbf{spring-boot-starter-web}: dipendenze necessarie per costruire applicazioni web RESTful.
+\end{itemize}
+
+\subsubsection*{Librerie di utilità}
+\begin{itemize}
+    \item \textbf{io.jsonwebtoken}: insieme alle relative dipendenze è utilizzata per la gestione dei JSON Web Tokens (JWT), che sono utilizzati per l'autenticazione e l'autorizzazione;
+    \item \textbf{io.github.cdimascio}: permette di caricare variabili d'ambiente da un file .env, semplificando la configurazione dell'applicazione;
+    \item \textbf{org.projectlombok}: utilizzato per ridurre il boilerplate del codice Java attraverso l'uso di annotazioni, in particolare evita la scrittura manuale di getter, setter e costruttori.
+\end{itemize}
+
+\subsubsection*{Strumenti di svilupppo}
+\begin{itemize}
+    \item \textbf{spring-boot-devtools}: fornisce funzionalità di sviluppo come il live reload;
+    \item \textbf{spring-boot-starter-test}: include librerie di testing come JUnit, Mockito e AssertJ per supportare lo sviluppo di test unitari e di integrazione.
+\end{itemize}
+
+Vista la necessità di mantenere bassa la complessità dell'applicazione, l'azienda ospitante ha richiesto che non venisse implementato il modulo Spring Security.
+
+\subsection{Pattern di progettazione}
+Alcuni pattern implementati sono:
+\begin{itemize}
+    \item \textbf{Singleton}: assicura che una classe abbia solo un'istanza e fornisce un punto di accesso globale a essa, le classi annotate con @Component, @Service, @Repository, e @Configuration sono gestite come singleton di default da Spring.
+    \item \textbf{Repository}: fornisce un'interfaccia per accedere ai dati e nasconde la logica di accesso ai dati, utilizzato per creare interfacce che estendono \texttt{JpaRepository}.
+\end{itemize}
+
+
+
+\subsection{Gestione della persistenza}
+Descrivi l'approccio alla gestione della persistenza dei dati, inclusi i dettagli sulla configurazione di JPA/Hibernate, e le relazioni tra le entità principali.
+
+\subsection{Gestione della sicurezza}
+Spiega come viene gestita la sicurezza (autenticazione, autorizzazione), utilizzando ad esempio Spring Security.

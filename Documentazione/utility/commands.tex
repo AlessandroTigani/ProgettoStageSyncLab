@@ -1,0 +1,66 @@
+\newcommand{\Title}{Manuale Tecnico}
+\newcommand{\Author}{Alessandro Tigani Sava}
+\newcommand{\Date}{29/07/2024}
+\newcommand{\Activity}{Tirocinio Sync Lab}
+\newcommand{\StudentMail}{alessandro.tiganisava@studenti.unipd.it}
+\newcommand{\RagioneSocAzienda}{Sync Lab s.r.l}
+\newcommand{\TutorAziendale}{Fabio Pallaro}
+\newcommand{\EmailTutorAziendale}{f.pallaro@synclab.it}
+
+
+\newcommand{\copertina}{
+	\begin{titlepage}
+    
+        % Defines a new command for the horizontal lines, change thickness here
+        \newcommand{\HRule}{\rule{\linewidth}{0.5mm}} 
+        
+        % Center everything
+        \center
+        
+        %----------------------------------------------------------------------------------------
+        %	LOGO SECTION
+        %----------------------------------------------------------------------------------------
+        \vfill 
+        \includegraphics[width=8cm]{img/logo_azienda.png}
+        \vspace{4cm}
+        
+        %----------------------------------------------------------------------------------------
+        %	TITLE SECTION
+        %----------------------------------------------------------------------------------------
+        \HRule \\[0.4cm]
+        { \huge \bfseries \Title}\\[0.4cm] % Title of your document
+        {\large \bfseries \Activity}\\[0.4cm]
+        \HRule \\[1.5cm]
+        
+        %----------------------------------------------------------------------------------------
+        %	AUTHOR SECTION
+        %----------------------------------------------------------------------------------------
+        \vspace{1.5cm}
+        \begin{minipage}{0.4\textwidth}
+            \begin{flushleft} 
+                \large
+                \emph{Studente:}\\
+                \Author
+            \end{flushleft}
+        \end{minipage}
+        ~
+        \begin{minipage}{0.4\textwidth}
+            \begin{flushright} \large
+                \emph{Azienda:} \\
+                \RagioneSocAzienda
+            \end{flushright}
+        \end{minipage}\\[2cm]
+        
+        %----------------------------------------------------------------------------------------
+        %	DATE SECTION
+        %----------------------------------------------------------------------------------------
+        
+        {\large \today}\\[2cm]
+        
+        
+        %----------------------------------------------------------------------------------------
+        % Fill the rest of the page with whitespace
+        %\vfill 
+        
+    \end{titlepage}
+}

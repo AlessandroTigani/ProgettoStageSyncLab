@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.synclab</groupId>
 	<artifactId>triphippie</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>triphippie</name>
 	<description>Project created during the internship at Synclab</description>
 	<url/>
