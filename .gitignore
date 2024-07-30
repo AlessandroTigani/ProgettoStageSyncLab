@@ -15,11 +15,10 @@ triphippie/src/main/resources/.env
 *.cb
 *.cb2
 .*.lb
-*.pdf
 
 ## Intermediate documents:
 *.dvi
 *.xdv
 *-converted-to.*
-Documentazione/main.fdb_latexmk
-Documentazione/main.synctex.gz
+*.fdb_latexmk
+*.synctex.gz

@@ -47,11 +47,13 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<String> create(@Valid @RequestBody UserDTORequest userDTORequest) {
+    public ResponseEntity<UserDTOResponse> create(@Valid @RequestBody UserDTORequest userDTORequest) {
         UserProfile userProfile = this.userConverter.toEntity(userDTORequest);
         userProfile.setPassword(userService.hashPassword(userProfile.getPassword()));
         userService.save(userProfile);
-        return new ResponseEntity<>("Created", HttpStatus.CREATED);
+        UserDTOResponse userDTOResponse = this.userConverter.toDto(userProfile);
+        //return new ResponseEntity<>("Created", HttpStatus.CREATED);
+        return new ResponseEntity<>(userDTOResponse, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
