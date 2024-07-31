@@ -14,11 +14,10 @@ Un esempio di compilazione del file è il seguente:
     POSTGRES_USER=postgres
     POSTGRES_PASSWORD=postgres
     POSTGRES_DB=triphippie
+    SERVER_PORT=8765
     JWT_SECRET_KEY=xVQ9J3BcTTJIQqA3r8xdlJEe6jrTlyWtzJZt5cZtnl0=
     IMAGE_PATH=C:/Dev/ProgettoStageSyncLab/triphippie/resources
 \end{lstlisting}
-Eventuali modifiche apportate al file \texttt{.env} dovranno essere riflesse anche nel file \\
-\texttt{application.properties} presente nella stessa directory.\\
 Si può infine procedere ad installare le dipendenze con il comando:
 \begin{lstlisting}
     mvn clean install
