@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,7 @@ public class TripController {
     }
 
     @PostMapping
-    public ResponseEntity<String> create(
+    public ResponseEntity<TripDTO> create(
             @Valid @RequestBody TripDTO tripDTO,
             @RequestHeader(value = "Authorization", required = true) String authorizationHeader
     ) {
@@ -58,11 +59,13 @@ public class TripController {
         if(userProfile.isEmpty()) {
             throw new EntryNotFoundException("User not found");
         }
-        if(!jwtUtil.validateToken(authorizationHeader, userProfile.get().getUsername())){
+        boolean isTokenValid = jwtUtil.validateToken(authorizationHeader, userProfile.get().getUsername());
+        if(!isTokenValid){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         tripService.save(trip, userProfile.get());
-        return new ResponseEntity<>("Created", HttpStatus.CREATED);
+        TripDTO tripDTOSaved = this.tripConverter.toDto(trip);
+        return new ResponseEntity<>(tripDTOSaved, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
@@ -79,14 +82,21 @@ public class TripController {
     public List<TripDTO> getTrips(
             @RequestParam(name = "page") int page,
             @RequestParam(name = "tripsSize") int tripsSize,
-            @RequestParam(name = "startDate", required = false) LocalDateTime startDate,
-            @RequestParam(name = "endDate", required = false) LocalDateTime endDate,
+            @RequestParam(name = "startDate", required = false) LocalDate startDate,
+            @RequestParam(name = "endDate", required = false) LocalDate endDate,
             @RequestParam(name = "userId", required = false) Long userId
     ){
         if(userId != null && userService.findById(userId).isEmpty()){
             throw new EntryNotFoundException("User not found");
         }
-        List<Trip> trips = tripService.findByFilters(page, tripsSize, startDate, endDate, userId);
+        if(startDate != null && endDate != null && startDate.isAfter(endDate)){
+            throw new EntryNotFoundException("Start date is after end date");
+        }
+        LocalDateTime startDateTime;
+        LocalDateTime endDateTime;
+        startDateTime = startDate == null ? null : startDate.atStartOfDay();
+        endDateTime = endDate == null ? null : endDate.atStartOfDay();
+        List<Trip> trips = tripService.findByFilters(page, tripsSize, startDateTime, endDateTime, userId);
         List<TripDTO> tripDTOs = new ArrayList<>();
         for (Trip trip : trips) {
             tripDTOs.add(this.tripConverter.toDto(trip));
@@ -103,7 +113,8 @@ public class TripController {
         Optional<Trip> tripFound = tripService.findById(id);
         if(tripFound.isEmpty())
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        if(!jwtUtil.validateToken(authorizationHeader, tripFound.get().getUserProfile().getUsername())){
+        boolean isTokenValid = jwtUtil.validateToken(authorizationHeader, tripFound.get().getUserProfile().getUsername());
+        if(!isTokenValid){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         tripDTO.setUserId(tripFound.get().getUserProfile().getId());
@@ -120,7 +131,8 @@ public class TripController {
         Optional<Trip> tripFound = tripService.findById(id);
         if(tripFound.isEmpty())
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        if(!jwtUtil.validateToken(authorizationHeader, tripFound.get().getUserProfile().getUsername())){
+        boolean isTokenValid = jwtUtil.validateToken(authorizationHeader, tripFound.get().getUserProfile().getUsername());
+        if(!isTokenValid){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         this.tripService.deleteById(id);
@@ -135,6 +147,13 @@ public class TripController {
             tripDTOs.add(this.tripConverter.toDto(trip));
         }
         return new ResponseEntity<>(tripDTOs, HttpStatus.FOUND);
+    }
+
+
+    @GetMapping("/total")
+    public ResponseEntity<Long> getTotalTrips() {
+        Long totalTrips = this.tripService.findTotalTrips();
+        return new ResponseEntity<>(totalTrips, HttpStatus.OK);
     }
 
     @GetMapping("/to-complete")

@@ -1,6 +1,5 @@
 package com.synclab.triphippie.controller;
 
-import com.synclab.triphippie.dto.IdDTO;
 import com.synclab.triphippie.dto.JourneyDTO;
 import com.synclab.triphippie.exception.EntryNotFoundException;
 import com.synclab.triphippie.model.Journey;
@@ -26,6 +25,8 @@ public class JourneyController {
     private final JourneyConverter journeyConverter;
     private final JwtUtil jwtUtil;
     private final TripService tripService;
+    private static final String JOURNEY_NOT_FOUND = "Journey not found.";  //
+
 
     public JourneyController(
             JourneyService journeyService,
@@ -39,11 +40,12 @@ public class JourneyController {
     }
 
     @PostMapping
-    public ResponseEntity<String> create(
+    public ResponseEntity<JourneyDTO> create(
             @Valid @RequestBody JourneyDTO dto,
             @RequestHeader(value = "Authorization", required = true) String authorizationHeader
     ) {
-        if(jwtUtil.isTokenExpired(authorizationHeader)){
+        boolean isTokenExpired = jwtUtil.isTokenExpired(authorizationHeader);
+        if(isTokenExpired){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         Optional<Trip> tripFound = tripService.findById(dto.getTripId());
@@ -52,14 +54,15 @@ public class JourneyController {
         Journey entity = journeyConverter.toEntity(dto);
         entity.setId(1L);
         journeyService.save(entity);
-        return new ResponseEntity<>("Created", HttpStatus.CREATED);
+        JourneyDTO journeyDTO = journeyConverter.toDto(entity);
+        return new ResponseEntity<>(journeyDTO, HttpStatus.CREATED);
     }
 
     @GetMapping
     public ResponseEntity<List<JourneyDTO>> getAllByTripId(
-            @RequestBody IdDTO id
+            @RequestParam Long tripId
     ) {
-        Optional<Trip> tripFound = tripService.findById(id.getTripId());
+        Optional<Trip> tripFound = tripService.findById(tripId);
         if(tripFound.isEmpty())
             throw new EntryNotFoundException("Trip not found.");
         List<Journey> journeys = journeyService.findAllByTrip(tripFound.get());
@@ -77,26 +80,28 @@ public class JourneyController {
     ) {
         Optional<Journey> journeyFound = journeyService.findById(id);
         if(journeyFound.isEmpty())
-            throw new EntryNotFoundException("Journey not found.");
+            throw new EntryNotFoundException(JOURNEY_NOT_FOUND);
         JourneyDTO journeyDTO = journeyConverter.toDto(journeyFound.get());
         return new ResponseEntity<>(journeyDTO, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> update(
+    public ResponseEntity<JourneyDTO> update(
             @PathVariable("id") Long id,
             @RequestHeader(value = "Authorization", required = true) String authorizationHeader,
             @Valid @RequestBody JourneyDTO dto
     ){
         Optional<Journey> journeyFound = journeyService.findById(id);
         if(journeyFound.isEmpty())
-            throw new EntryNotFoundException("Journey not found.");
-        if(jwtUtil.isTokenExpired(authorizationHeader)){
+            throw new EntryNotFoundException(JOURNEY_NOT_FOUND);
+        boolean isTokenExpired = jwtUtil.isTokenExpired(authorizationHeader);
+        if(isTokenExpired){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         Journey journeyToUpdate = journeyConverter.toEntity(dto);
         journeyService.update(journeyToUpdate, id);
-        return new ResponseEntity<>("Updated", HttpStatus.OK);
+        JourneyDTO journeyDTO = journeyConverter.toDto(journeyToUpdate);
+        return new ResponseEntity<>(journeyDTO, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
@@ -106,8 +111,9 @@ public class JourneyController {
     ) {
         Optional<Journey> journeyFound = journeyService.findById(id);
         if(journeyFound.isEmpty())
-            throw new EntryNotFoundException("Journey not found.");
-        if(jwtUtil.isTokenExpired(authorizationHeader)){
+            throw new EntryNotFoundException(JOURNEY_NOT_FOUND);
+        boolean isTokenExpired = jwtUtil.isTokenExpired(authorizationHeader);
+        if(isTokenExpired){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         journeyService.deleteById(id);

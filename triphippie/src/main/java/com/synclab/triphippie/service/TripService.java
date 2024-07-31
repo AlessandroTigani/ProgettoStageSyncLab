@@ -99,4 +99,8 @@ public class TripService {
         return tripRepository.findByEndDateGreaterThan(LocalDateTime.now());
     }
 
+    public Long findTotalTrips(){
+        return tripRepository.count();
+    }
+
 }

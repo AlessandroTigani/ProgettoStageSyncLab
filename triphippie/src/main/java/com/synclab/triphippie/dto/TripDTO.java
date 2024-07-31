@@ -1,25 +1,29 @@
 package com.synclab.triphippie.dto;
 
-import com.synclab.triphippie.model.PreferenceTag;
-import com.synclab.triphippie.model.PreferenceVehicle;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
+@Data
 public class TripDTO {
-
+    
     private Long id;
 
+    @Setter
+    @Getter
     private Long userId;
 
     @NotNull(message = "Start date cannot be null")
     @Future(message = "Date must be in the future")
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
     @NotNull(message = "End date cannot be null")
     @Future(message = "Date must be in the future")
-    private LocalDateTime endDate;
+    private LocalDate endDate;
 
     @NotNull(message = "Vehicle cannot be null")
     private String vehicle;
@@ -33,37 +37,23 @@ public class TripDTO {
     @NotNull(message = "End destination cannot be null")
     private DestinationDTO endDestination;
 
+    @Setter
+    @Getter
     private String description;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public @NotNull(message = "Start date cannot be null") @Future(message = "Date must be in the future") LocalDateTime getStartDate() {
+    public @NotNull(message = "Start date cannot be null") @Future(message = "Date must be in the future") LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(@NotNull(message = "Start date cannot be null") @Future(message = "Date must be in the future") LocalDateTime startDate) {
+    public void setStartDate(@NotNull(message = "Start date cannot be null") @Future(message = "Date must be in the future") LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public @NotNull(message = "End date cannot be null") @Future(message = "Date must be in the future") LocalDateTime getEndDate() {
+    public @NotNull(message = "End date cannot be null") @Future(message = "Date must be in the future") LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(@NotNull(message = "End date cannot be null") @Future(message = "Date must be in the future") LocalDateTime endDate) {
+    public void setEndDate(@NotNull(message = "End date cannot be null") @Future(message = "Date must be in the future") LocalDate endDate) {
         this.endDate = endDate;
     }
 
@@ -99,11 +89,4 @@ public class TripDTO {
         this.endDestination = endDestination;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 }

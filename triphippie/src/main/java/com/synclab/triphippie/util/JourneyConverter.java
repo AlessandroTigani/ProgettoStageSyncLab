@@ -31,7 +31,10 @@ public class JourneyConverter {
         if(foundTrip.isEmpty())
             throw new EntryNotFoundException("Trip not found.");
         journey.setTrip(foundTrip.get());
-        journey.setStepNumber(dto.getStepNumber());
+        if(dto.getStepNumber() == null)
+            journey.setStepNumber(1);
+        else
+            journey.setStepNumber(dto.getStepNumber());
         Destination tempDestination = new Destination(
                 dto.getDestination().getName(),
                 dto.getDestination().getLatitude(),

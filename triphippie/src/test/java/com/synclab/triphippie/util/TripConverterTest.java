@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -42,8 +43,8 @@ class TripConverterTest {
         TripDTO dto = new TripDTO();
         dto.setId(1L);
         dto.setUserId(2L);
-        dto.setStartDate(LocalDateTime.of(2024, 1, 1, 1, 1));
-        dto.setEndDate(LocalDateTime.of(2024, 1, 10, 1, 1));
+        dto.setStartDate(LocalDate.of(2024, 1, 1));
+        dto.setEndDate(LocalDate.of(2024, 1, 10));
         dto.setVehicle("Car");
         dto.setType("Adventure");
         dto.setStartDestination(new DestinationDTO("Paris", 48.8566, 2.3522));
@@ -70,8 +71,8 @@ class TripConverterTest {
         assertNotNull(trip);
         assertEquals(dto.getId(), trip.getId());
         assertEquals(userProfile, trip.getUserProfile());
-        assertEquals(dto.getStartDate(), trip.getStartDate());
-        assertEquals(dto.getEndDate(), trip.getEndDate());
+        assertEquals(dto.getStartDate().atStartOfDay(), trip.getStartDate());
+        assertEquals(dto.getEndDate().atStartOfDay(), trip.getEndDate());
         assertEquals(preferenceVehicle, trip.getVehicle());
         assertEquals(preferenceTag, trip.getType());
         assertEquals(dto.getStartDestination().getName(), trip.getStartDestination().getName());
@@ -101,6 +102,8 @@ class TripConverterTest {
         TripDTO dto = new TripDTO();
         dto.setVehicle("Car");
         dto.setUserId(2L);
+        dto.setStartDate(LocalDate.of(2024, 1, 1));
+        dto.setEndDate(LocalDate.of(2024, 1, 10));
         when(userService.findById(2L)).thenReturn(Optional.of(new UserProfile()));
         when(preferenceVehicleRepository.findByName("Car")).thenReturn(Optional.empty());
 
@@ -116,6 +119,8 @@ class TripConverterTest {
         dto.setType("Adventure");
         dto.setUserId(2L);
         dto.setVehicle("Car");
+        dto.setStartDate(LocalDate.of(2024, 1, 1));
+        dto.setEndDate(LocalDate.of(2024, 1, 10));
         when(userService.findById(2L)).thenReturn(Optional.of(new UserProfile()));
         when(preferenceVehicleRepository.findByName("Car")).thenReturn(Optional.of(new PreferenceVehicle()));
         when(preferenceTagRepository.findByName("Adventure")).thenReturn(Optional.empty());
@@ -158,8 +163,8 @@ class TripConverterTest {
         assertNotNull(dto);
         assertEquals(trip.getId(), dto.getId());
         assertEquals(trip.getUserProfile().getId(), dto.getUserId());
-        assertEquals(trip.getStartDate(), dto.getStartDate());
-        assertEquals(trip.getEndDate(), dto.getEndDate());
+        assertEquals(LocalDate.from(trip.getStartDate()), dto.getStartDate());
+        assertEquals(LocalDate.from(trip.getEndDate()), dto.getEndDate());
         assertEquals(trip.getVehicle().getName(), dto.getVehicle());
         assertEquals(trip.getType().getName(), dto.getType());
         assertEquals(trip.getStartDestination().getName(), dto.getStartDestination().getName());

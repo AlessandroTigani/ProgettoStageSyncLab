@@ -112,7 +112,7 @@ public class UserController {
     }
 
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
             @PathVariable("id") Long userId,
             @RequestHeader(value = "Authorization", required = true) String authorizationHeader
@@ -126,7 +126,7 @@ public class UserController {
 
     @PostMapping("/{id}/profileImage")
     public ResponseEntity<String> createProfileImage(
-            @RequestParam("file") MultipartFile file,
+            @RequestParam("profileImage") MultipartFile file,
             @PathVariable("id") Long userId,
             @RequestHeader(value = "Authorization", required = true) String authorizationHeader
     ) throws IOException {

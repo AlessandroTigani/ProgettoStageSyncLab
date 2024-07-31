@@ -9,6 +9,7 @@ import com.synclab.triphippie.repository.PreferenceVehicleRepository;
 import com.synclab.triphippie.service.UserService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -34,8 +35,8 @@ public class TripConverter {
             throw new EntryNotFoundException("User not found.");
         }
         trip.setUserProfile(userProfileOptional.get());
-        trip.setStartDate(dto.getStartDate());
-        trip.setEndDate(dto.getEndDate());
+        trip.setStartDate(dto.getStartDate().atStartOfDay());
+        trip.setEndDate(dto.getEndDate().atStartOfDay());
 
         Optional<PreferenceVehicle> optionalVehicle = preferenceVehicleRepository.findByName(dto.getVehicle());
         if (optionalVehicle.isEmpty()) {
@@ -74,8 +75,8 @@ public class TripConverter {
         TripDTO dto = new TripDTO();
         dto.setId(trip.getId());
         dto.setUserId(trip.getUserProfile().getId());
-        dto.setStartDate(trip.getStartDate());
-        dto.setEndDate(trip.getEndDate());
+        dto.setStartDate(LocalDate.from(trip.getStartDate()));
+        dto.setEndDate(LocalDate.from(trip.getEndDate()));
         dto.setVehicle(trip.getVehicle().getName());
         dto.setType(trip.getType().getName());
         DestinationDTO tempStartDestination = new DestinationDTO(

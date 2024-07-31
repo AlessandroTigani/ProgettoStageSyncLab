@@ -31,7 +31,7 @@ public class JwtUtil {
     public String generateToken(String subject, Long id) {
         return Jwts.builder()
                 .setSubject(subject)
-                .claim("id", id)
+                .claim("user-id", id)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 36000000)) // 1 hour expiration
                 .signWith(key)
@@ -47,7 +47,7 @@ public class JwtUtil {
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token);
-        return claimsJws.getBody().get("id", Long.class);
+        return claimsJws.getBody().get("user-id", Long.class);
     }
 
     public Date extractExpiration(String token) {
