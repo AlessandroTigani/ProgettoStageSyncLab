@@ -37,6 +37,15 @@ services:
     volumes:
       - ./resources:/app/resources
 
+  frontend:
+    build:
+      context: ../Triphippie-front  # Percorso relativo al contesto di build
+      dockerfile: Dockerfile
+    ports:
+      - "4200:4200"
+    networks:
+      - triphippie
+
 volumes:
   db:
     driver: local
