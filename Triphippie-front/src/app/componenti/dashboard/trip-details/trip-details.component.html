@@ -1,0 +1,29 @@
+<div class="trip-details-container">
+    <div class="trip-header">
+      <h2>{{trip.type}}</h2>
+    </div>
+    <div class="trip-dates">
+      <p><i class="pi pi-calendar"></i> Inizio: {{trip.startDate}}</p>
+      <p><i class="pi pi-calendar"></i> Fine: {{trip.endDate}}</p>
+    </div>
+    <div class="trip-preferences">
+      <p><i class="pi pi-map-marker"></i> Percorso: {{trip.startDestination.name}} - {{trip.endDestination.name}}</p>
+      <p><i class="pi pi-car"></i> Veicolo: {{trip.vehicle}}</p>
+    </div>
+    <div class="trip-description">
+      <p>{{trip.description}}</p>
+    </div>
+    <div class="journeys">
+      <h3>Tappe</h3>
+      <div class="journey-card-container">
+        <div class="journey" *ngFor="let journey of journeys">
+          <p><strong>Destinazione:</strong> {{journey.destination.name}}</p>
+          <p><strong>Descrizione:</strong> {{journey.description}}</p>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="isEmpty" class="button-footer">
+      Momentaneamente non ci sono Tappe specifiche per questo Viaggio
+    </div>
+  </div>
+  
