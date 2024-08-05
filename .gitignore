@@ -22,3 +22,4 @@ triphippie/src/main/resources/.env
 *-converted-to.*
 *.fdb_latexmk
 *.synctex.gz
+Triphippie-back/.env
